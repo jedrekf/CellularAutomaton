@@ -21,7 +21,6 @@
                   <items>
                         <MenuItem mnemonicParsing="false" text="Load" />
                     <MenuItem mnemonicParsing="false" text="Save" />
-                        <MenuItem fx:id="menuExit" mnemonicParsing="false" text="Close" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
@@ -47,7 +46,7 @@
                </VBox.margin>
             </Label>
             <ListView />
-            <Button mnemonicParsing="false" onAction="#manageRules" text="Define a starting grid">
+            <Button mnemonicParsing="false" text="Define a starting grid">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
