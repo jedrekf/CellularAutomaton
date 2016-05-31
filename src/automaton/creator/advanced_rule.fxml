@@ -11,9 +11,9 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="136.0" prefWidth="487.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="automaton.creator.AdvancedRuleCreator">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="135.0" prefWidth="544.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="automaton.creator.AdvancedRuleCreator">
    <center>
-      <HBox alignment="CENTER_LEFT" prefHeight="117.0" prefWidth="599.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" prefHeight="140.0" prefWidth="551.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="If ">
                <HBox.margin>
@@ -23,7 +23,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-            <GridPane focusTraversable="true" gridLinesVisible="true" prefHeight="83.0" prefWidth="163.0">
+            <GridPane fx:id="grid_pane" focusTraversable="true" hgap="1.0" prefHeight="83.0" prefWidth="163.0" vgap="1.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -56,8 +56,8 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-            <ChoiceBox layoutX="41.0" layoutY="39.0" />
-            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Save">
+            <ComboBox fx:id="combo_outcome" prefHeight="25.0" prefWidth="72.0" />
+            <Button fx:id="btn_save" alignment="CENTER_RIGHT" mnemonicParsing="false" text="Save">
                <HBox.margin>
                   <Insets bottom="5.0" left="40.0" right="5.0" top="5.0" />
                </HBox.margin>
@@ -65,7 +65,7 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Button>
-            <Button alignment="CENTER_RIGHT" layoutX="500.0" layoutY="38.0" mnemonicParsing="false" text="Cancel">
+            <Button fx:id="btn_cancel" alignment="CENTER_RIGHT" layoutX="500.0" layoutY="38.0" mnemonicParsing="false" text="Cancel">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>

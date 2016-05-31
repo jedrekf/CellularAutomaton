@@ -2,6 +2,8 @@ package models.rules;
 
 import models.Cell;
 
+import java.util.Arrays;
+
 /**
  * Created by jedrek on 05.05.16.
  */
@@ -20,6 +22,13 @@ public class RuleAdvanced implements IRule {
         return exact;
     }
 
+    @Override
+    public String toString() {
+        return "RuleAdvanced{" +
+                "cells=" + Arrays.toString(cells) +
+                ", outcome=" + outcome +
+                '}';
+    }
 
     /**
      * Creates an Advanced Rule
@@ -34,7 +43,6 @@ public class RuleAdvanced implements IRule {
                    cells[i][j] = 1;
                 }else{
                     cells[i][j] = 0;
-
                 }
             }
         }

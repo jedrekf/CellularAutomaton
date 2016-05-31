@@ -1,5 +1,6 @@
 package models.rules;
 
+import javafx.scene.control.ListCell;
 import models.Cell;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
  * Created by jedrek on 05.05.16.
  * Rule of format if (more||less) than (#aliveNeighbours) cells alive then (outcome)
  */
-public class RuleSimple implements IRule {
+public class RuleSimple extends ListCell<String> implements IRule {
     private int aliveNeighbours; // 0-24
     private String condition; // less ||  more
     private int outcome; // 0 dead, 1 alive
@@ -30,6 +31,15 @@ public class RuleSimple implements IRule {
         return exacts;
     }
 
+    @Override
+    public String toString() {
+        return "RuleSimple{" +
+                "aliveNeighbours=" + aliveNeighbours +
+                ", condition='" + condition + '\'' +
+                ", outcome=" + outcome +
+                '}';
+    }
+
     /**
      * Creates a Simple Rule
      * @param aliveNeighbours Number of alive neighbours needed for a rule
@@ -48,14 +58,16 @@ public class RuleSimple implements IRule {
      * @return Set of exact rules representing a Simple Rule
      */
     private RuleExact[] generateExacts(int alive){
-        RuleExact localExacts[] = new RuleExact[aliveNeighbours+1];
+        RuleExact localExacts[];
         if(condition.compareTo("less") == 0) {
+            localExacts = new RuleExact[aliveNeighbours];
             for (int i = 0; i < alive; i++){
                 localExacts[i] = new RuleExact(i, outcome);
             }
         }else{
+            localExacts = new RuleExact[25-aliveNeighbours];
             int i=0;
-            for(int j=alive; j <= 24; j++){
+            for(int j=alive+1; j <= 24; j++){
                 localExacts[i] = new RuleExact(j, outcome);
                 i++;
             }

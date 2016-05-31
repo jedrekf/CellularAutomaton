@@ -118,7 +118,6 @@ public class RuleSet {
     public void add(IRule rule){
         if(validateRule(rule))
             rules.add(rule);
-
     }
 
     /**

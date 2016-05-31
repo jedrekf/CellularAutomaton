@@ -4,15 +4,31 @@ import automaton.helper.AlertBox;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
-public class Main extends Application{
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class Main extends Application implements Initializable{
 
     private Stage window;
-    @FXML private MenuItem menuExit;
+    private ResizableCanvas canvas;
+    @FXML
+    private StackPane stackPane;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        canvas = new ResizableCanvas();
+        canvas.setWidth(400);
+        canvas.setHeight(400);
+        stackPane.getChildren().add(canvas);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -45,6 +61,7 @@ public class Main extends Application{
             window.close();
         }
     }
+
 
 
 }

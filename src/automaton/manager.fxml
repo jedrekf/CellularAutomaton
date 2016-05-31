@@ -12,27 +12,12 @@
 <?import javafx.scene.control.Label?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="543.0" prefWidth="529.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="automaton.RulesManager">
-   <top>
-      <VBox alignment="CENTER">
-         <children>
-            <Label alignment="TOP_LEFT" text="Defined rules">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </Label>
-            <ListView prefHeight="160.0" prefWidth="529.0" />
-         </children>
-      </VBox>
-   </top>
    <bottom>
       <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
          <children>
             <HBox alignment="CENTER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#defineSimpleRule" text="Define simple rule">
+                  <Button fx:id="btn_define_simple_rule" mnemonicParsing="false" onAction="#defineSimpleRule" text="Define simple rule">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -40,7 +25,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#defineAdvancedRule" text="Define advanced rule.">
+                  <Button fx:id="btn_define_advanced_rule" mnemonicParsing="false" onAction="#defineAdvancedRule" text="Define advanced rule.">
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
@@ -73,20 +58,12 @@
    <center>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label text="Rules to be added.">
+            <Label text="Rules">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </Label>
-            <ListView prefHeight="100.0" prefWidth="529.0" />
-            <Button mnemonicParsing="false" onAction="#addRulesAndApply" text="Add rules and apply">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </Button>
+            <ListView fx:id="listview_rules" prefHeight="311.0" prefWidth="529.0" />
          </children>
       </VBox>
    </center>
