@@ -67,7 +67,6 @@ public class SimpleRuleCreator implements Initializable {
                 }else{
                     newRuleSimple = new RuleSimple(aliveNeighbours, condition, outcome);
                     Window stage = btn_save.getScene().getWindow();
-                    System.out.println(newRuleSimple.toString());
                     stage.hide();
                 }
             }catch(Exception e){
@@ -93,7 +92,7 @@ public class SimpleRuleCreator implements Initializable {
         window.showAndWait();
 
         if(newRuleSimple != null)
-            System.out.println("Rule simple created. " + newRuleSimple.toString());
+            System.out.println(newRuleSimple.toString());
         return newRuleSimple;
     }
 

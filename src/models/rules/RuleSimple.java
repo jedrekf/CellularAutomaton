@@ -60,12 +60,12 @@ public class RuleSimple extends ListCell<String> implements IRule {
     private RuleExact[] generateExacts(int alive){
         RuleExact localExacts[];
         if(condition.compareTo("less") == 0) {
-            localExacts = new RuleExact[aliveNeighbours];
+            localExacts = new RuleExact[alive];
             for (int i = 0; i < alive; i++){
                 localExacts[i] = new RuleExact(i, outcome);
             }
         }else{
-            localExacts = new RuleExact[25-aliveNeighbours];
+            localExacts = new RuleExact[24-alive];
             int i=0;
             for(int j=alive+1; j <= 24; j++){
                 localExacts[i] = new RuleExact(j, outcome);

@@ -100,8 +100,8 @@ public class AdvancedRuleCreator implements Initializable {
         Scene scene = new Scene(layout);
         window.setScene(scene);
         window.showAndWait();
-
-        System.out.println("Rule advanced created.");
+        if(newRuleAdvanced != null)
+            System.out.println(newRuleAdvanced.toString());
         return newRuleAdvanced;
     }
 
