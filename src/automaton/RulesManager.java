@@ -2,6 +2,7 @@ package automaton;
 
 import automaton.creator.AdvancedRuleCreator;
 import automaton.creator.SimpleRuleCreator;
+import automaton.helper.InformBox;
 import com.sun.deploy.security.ruleset.Rule;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -76,9 +77,11 @@ public class RulesManager implements Initializable {
         SimpleRuleCreator creator = new SimpleRuleCreator();
         RuleSimple simple = creator.display();
         if(simple != null) {
-            rules.add(simple);
-            observable_rules.add(simple.toString());
-            listview_rules.setItems(observable_rules);
+            if(rules.add(simple)) {
+                observable_rules.add(simple.toString());
+            }else{
+                InformBox.display("Rule collision", "Can't add the rule, it collides with existing ones.");
+            }
         }
     }
 
@@ -90,9 +93,11 @@ public class RulesManager implements Initializable {
         AdvancedRuleCreator creator = new AdvancedRuleCreator();
         RuleAdvanced advanced = creator.display();
         if(advanced != null) {
-            rules.add(advanced);
-            observable_rules.add(advanced.toString());
-            listview_rules.setItems(observable_rules);
+            if(rules.add(advanced)) {
+                observable_rules.add(advanced.toString());
+            }else{
+                InformBox.display("Rule collision", "Can't add the rule, it collides with existing ones.");
+            }
         }
     }
 

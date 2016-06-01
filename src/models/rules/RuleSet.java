@@ -81,7 +81,6 @@ public class RuleSet {
             return true;
         }
     }
-
     /**
      * Checks sets of Exact Rules for intersections with opposite outcomes
      * @param old_rule ExactRules representing the old rule
@@ -105,7 +104,6 @@ public class RuleSet {
         }
         return true;
     }
-
     /**
      * Checks if new_rule is a duplicate of a given one
      * @param old_rule Values of cells for a rule
@@ -124,22 +122,31 @@ public class RuleSet {
         }
         return true;
     }
-
     /**
      * Adds a rule to the set of rules.
-     * @param rule
+     * @param rule Rule to be added to the set.
+     * @return True if the rule is added successfully, False if rejected.
      */
-    public void add(IRule rule){
-        if(validateRule(rule))
+    public boolean add(IRule rule){
+        if(validateRule(rule)) {
             rules.add(rule);
+            return true;
+        }
+        return false;
     }
-
     /**
-     * Removes a rule from the set of rules.
-     * @param idx
+     * Removes a rule at index from the set of rules.
+     * @param idx Index of a rule to be removed
      */
     public void remove(int idx){
         rules.remove(idx);
+    }
+    /**
+     * Removes provided rule from the set
+     * @param rule Rule to be deleted.
+     */
+    public void remove(IRule rule){
+        rules.remove(rule);
     }
 
 }
