@@ -1,7 +1,5 @@
 package automaton.creator;
 
-import automaton.RuleSet;
-import automaton.helper.AlertBox;
 import automaton.helper.InformBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +18,6 @@ import models.rules.RuleSimple;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.Exchanger;
 
 /**
  * Created by Jedrek on 2016-04-28.
@@ -72,7 +69,6 @@ public class SimpleRuleCreator implements Initializable {
                     Window stage = btn_save.getScene().getWindow();
                     System.out.println(newRuleSimple.toString());
                     stage.hide();
-                    RuleSet.ruleSet.add(newRuleSimple);
                 }
             }catch(Exception e){
                 e.printStackTrace();

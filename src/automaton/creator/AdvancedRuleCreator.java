@@ -1,7 +1,5 @@
 package automaton.creator;
 
-import automaton.RuleSet;
-import automaton.helper.InformBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,7 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -20,7 +17,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import models.Cell;
 import models.rules.RuleAdvanced;
-import models.rules.RuleSimple;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -78,7 +74,6 @@ public class AdvancedRuleCreator implements Initializable {
             newRuleAdvanced = new RuleAdvanced(cells, outcome);
             Window stage = btn_save.getScene().getWindow();
             stage.hide();
-            RuleSet.ruleSet.add(newRuleAdvanced);
         });
 
         btn_cancel.setOnAction(event -> {

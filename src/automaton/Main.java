@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import models.rules.RuleSet;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,6 +20,7 @@ public class Main extends Application implements Initializable{
 
     private Stage window;
     private ResizableCanvas canvas;
+    private static RuleSet rules = new RuleSet();
     @FXML
     private StackPane stackPane;
 
@@ -51,8 +53,8 @@ public class Main extends Application implements Initializable{
 
     public void manageRules() throws Exception {
         System.out.println("manager");
-        RulesManager manager = new RulesManager();
-        manager.display();
+        RulesManager manager = new RulesManager(rules);
+        rules = manager.display();
     }
 
     public void appExit(){

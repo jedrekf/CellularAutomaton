@@ -27,4 +27,5 @@ public interface IRule {
      */
     public RuleExact[] getExacts();
 
+    public String toString();
 }

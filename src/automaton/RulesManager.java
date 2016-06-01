@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,17 +19,20 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import models.rules.IRule;
 import models.rules.RuleAdvanced;
+import models.rules.RuleSet;
 import models.rules.RuleSimple;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * Created by Jedrek on 2016-04-28.
  */
-public class RulesManager {
+public class RulesManager implements Initializable {
     private Stage window;
-    private List<IRule> rules = new ArrayList<>();
+    private static RuleSet rules;
     private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
 
     @FXML
@@ -38,31 +42,50 @@ public class RulesManager {
     @FXML
     private Button btn_define_advanced_rule;
 
-    public void display() throws Exception{
+    public RulesManager(RuleSet _rules) {
+        rules = _rules;
+    }
+    public RulesManager() {}
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        for(IRule rule : rules.getList()){
+            observable_rules.add(rule.toString());
+        }
+        listview_rules.setItems(observable_rules);
+    }
+
+    public RuleSet display() throws Exception{
         window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
         Parent layout = FXMLLoader.load(getClass().getResource("manager.fxml"));
         window.setTitle("Rules manager");
         Scene scene = new Scene(layout);
         window.setScene(scene);
-        window.show();
+        window.showAndWait();
+
+        System.out.println("List of rules updated.");
+        return rules;
     }
-    public void addRulesAndApply(){
-            System.out.println("rules added.");
-    }
-    public void defineSimpleRule() throws Exception {
+
+    /**
+     * Opens a window for defining a Simple Rule
+     * @throws Exception Error when calling display()
+     */
+    public void defineSimpleRule() throws Exception{
         SimpleRuleCreator creator = new SimpleRuleCreator();
         RuleSimple simple = creator.display();
         if(simple != null) {
             rules.add(simple);
             observable_rules.add(simple.toString());
             listview_rules.setItems(observable_rules);
-        }else{
-            simple = (RuleSimple) RuleSet.ruleSet.get(RuleSet.ruleSet.size()-1);
-            rules = RuleSet.ruleSet;
-            observable_rules.add(simple.toString());
         }
     }
+
+    /**
+     *  Opens a window for defining a Advanced Rule
+     * @throws Exception Error when calling display()
+     */
     public void defineAdvancedRule() throws Exception {
         AdvancedRuleCreator creator = new AdvancedRuleCreator();
         RuleAdvanced advanced = creator.display();
@@ -70,11 +93,8 @@ public class RulesManager {
             rules.add(advanced);
             observable_rules.add(advanced.toString());
             listview_rules.setItems(observable_rules);
-        }else{
-            advanced = (RuleAdvanced) RuleSet.ruleSet.get(RuleSet.ruleSet.size()-1);
-            rules = RuleSet.ruleSet;
-            observable_rules.add(advanced.toString());
         }
     }
+
 
 }

@@ -18,6 +18,13 @@ public class RuleSet {
     private int cellState;
 
     /**
+     * Returns a current list of all Rules.
+     * @return Current list of IRules.
+     */
+    public List<IRule> getList() {
+        return rules;
+    }
+    /**
      * Calculates the next state of a Cell based on a set of rules.
      * @param cell
      * @return Next state of a cell
@@ -82,10 +89,17 @@ public class RuleSet {
      * @return TRUE if a Rule can be added to a set of Rules, else FALSE
      */
     private boolean isRuleSimpleCorrect(RuleExact[] old_rule, RuleExact[] new_rule){
-        for(RuleExact new_exact : new_rule){
-            for(RuleExact old_exact : old_rule){
-                if(new_exact.getAliveNeighbours() == old_exact.getAliveNeighbours()
-                        && new_exact.getOutcome() != old_exact.getOutcome())
+//        for(RuleExact new_exact : new_rule){
+//            for(RuleExact old_exact : old_rule){
+//                if(new_exact.getAliveNeighbours() == old_exact.getAliveNeighbours()
+//                        && new_exact.getOutcome() != old_exact.getOutcome())
+//                    return false;
+//            }
+//        }
+        for(int i=0; i<new_rule.length; i++){
+            for(int j=0; j<old_rule.length; j++){
+                if(new_rule[i].getAliveNeighbours() == old_rule[j].getAliveNeighbours()
+                        && new_rule[i].getOutcome() != old_rule[j].getOutcome())
                     return false;
             }
         }
