@@ -91,6 +91,11 @@ public class AdvancedRuleCreator implements Initializable {
         return null;
     }
 
+    /**
+     * Displays a creator for an Advanced rule
+     * @return Returns created Advanced rule (null if not created)
+     * @throws Exception
+     */
     public RuleAdvanced display() throws Exception{
         window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);

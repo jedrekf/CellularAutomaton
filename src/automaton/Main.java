@@ -1,6 +1,7 @@
 package automaton;
 
 import automaton.helper.AlertBox;
+import com.sun.org.apache.xml.internal.security.Init;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,9 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -27,51 +31,55 @@ public class Main extends Application implements Initializable{
 
     private Stage window;
     private ResizableCanvas canvas;
+    private Grid grid;
+    private double mouseX, mouseY;
     private double canvasWidth, canvasHeight;
-    private double tileSize, padding;
+    private int gridWidth, gridHeight;
     private static RuleSet rules = new RuleSet();
     private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
     private GraphicsContext g;
+
     @FXML
-    private StackPane stackPane;
+    ScrollPane pane = new ScrollPane();
     @FXML
     private ListView<String> listview_rules = new ListView<>();
 
-    /**
-     * Initializes the canvas
-     * @param location
-     * @param resources
-     */
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        canvasWidth = 400;
-        canvasHeight = 400;
-        listview_rules.setItems(observable_rules);
+        gridWidth = 1000;
+        gridHeight = 1000;
+        grid = new Grid(gridWidth, gridHeight);
 
-        canvas = new ResizableCanvas();
+        canvasWidth = 1000;
+        canvasHeight = 1000;
+        listview_rules.setItems(observable_rules);
+        canvas = new ResizableCanvas(grid);
         canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
+        pane.setContent(canvas);
 
-        GraphicsContext g = canvas.getGraphicsContext2D();
-        g.clearRect(0, 0, canvasWidth, canvasHeight);
-        g.setFill(Color.LIGHTBLUE);
-        for (int x = 0; x < canvasWidth; x += (tileSize + padding)) {
-            for (int y = 0; y < canvasHeight; y += (tileSize + padding)) {
-                double offsetY = (y%(2*(tileSize + padding))) == 0 ? (tileSize + padding) /2 : 0;
-                g.fillOval(x-tileSize+offsetY,y-tileSize,tileSize+tileSize,tileSize+tileSize);
-            }
-        }
-        stackPane.getChildren().add(canvas);
+        canvas.setOnMouseClicked(event -> {
+            mouseX = event.getX();
+            mouseY = event.getY();
+            canvas.clickCell(mouseX, mouseY);
+        });
+
+        canvas.setOnScroll(event -> {
+            canvas.zoomCanvas(event.getDeltaX());
+        });
     }
+
 
     /**
      * Clears the canvas and draws the given grid on a canvas.
      * @param canvas
      * @param grid
      */
-    public void updateCanvas(Canvas canvas, Grid grid){
-
+    public void updateCanvas(ResizableCanvas canvas, Grid grid){
+        canvas.drawGrid(grid);
     }
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -81,10 +89,12 @@ public class Main extends Application implements Initializable{
             e.consume();
             appExit();
         });
-
         Scene scene = new Scene(root);
         window.setScene(scene);
+
+
         window.show();
+        System.out.println("width " + pane.widthProperty() + " height " + pane.heightProperty());
     }
 
     public static void main(String[] args) {
@@ -111,5 +121,5 @@ public class Main extends Application implements Initializable{
     }
 
 
-
 }
+

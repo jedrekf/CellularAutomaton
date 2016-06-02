@@ -17,14 +17,36 @@ public class Grid {
     private ArrayList gridHistory = new ArrayList<HashMap<Point, Cell>>();
     public Point[][] points;
 
+    public int getState(Point p){
+       return grid.get(p).getState();
+    }
+
+    /**
+     * Changes a state of a cell to it's contradiction
+     * @param p Point(x,y) where x, y represent place in a grid
+     * @return new Cell state value
+     */
+    public int toggleState(Point p){
+        Cell cell = grid.get(p);
+        if(cell.getState()==0){
+            cell.setState(1);
+            grid.put(p, cell);
+            return 1;
+        }else{
+            cell.setState(0);
+            grid.put(p, cell);
+            return 0;
+        }
+    }
+
     public Grid(int _width, int _height){
         width = _width;
         height = _height;
-
+        points = new Point[width][height];
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
                 points[i][j] = new Point(i,j);
-                grid.put(points[i][j], new Cell());
+                grid.put(points[i][j], new Cell(0));
             }
         }
     }

@@ -81,7 +81,11 @@ public class SimpleRuleCreator implements Initializable {
         });
     }
 
-
+    /**
+     * Displays a creator for a Simple rule
+     * @return Returns created simple rule (null if not created)
+     * @throws Exception
+     */
     public RuleSimple display() throws Exception{
         window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
