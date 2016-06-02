@@ -12,26 +12,60 @@ import java.awt.*;
  */
 class ResizableCanvas extends Canvas {
     private Grid grid;
+    private boolean redraw = true;
     private GraphicsContext g;
     private double cellSize=20;
     private double padding = 1;
     public Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK;
 
+    /**
+     * Returns current grid of a canvas.
+     * @return Current grid of a canvas.
+     */
     public Grid getGrid() {
         return grid;
     }
 
+    /**
+     * Canvas that can be zoomed in and out.
+     * @param _grid Grid we create the canvas for
+     */
     public ResizableCanvas(Grid _grid) {
         grid = _grid;
 
         // Redraw canvas when size changes.
-        widthProperty().addListener(evt -> draw());
-        heightProperty().addListener(evt -> draw());
+        widthProperty().addListener(evt -> drawGrid(grid));
+        heightProperty().addListener(evt -> drawGrid(grid));
     }
 
-    public void zoomCanvas(double multiplierX) {
-        cellSize+= 4*multiplierX;
-        drawGrid(this.grid);
+    /**
+     * Zoom canvas in and out.
+     * @param delta Zoom in/out amount.
+     */
+    public void zoomCanvas(double delta) {
+        redraw = true;
+        if(delta != 0) {
+            cellSize += delta/40;
+            if(cellSize < 3){
+                if(cellSize < 1){
+                    cellSize = 1;
+                    redraw = false;
+                }
+                padding = 0;
+            }else if(cellSize > 100){
+                cellSize += delta/10;
+                if(cellSize > 500){
+                    cellSize = 500;
+                    redraw = false;
+                }
+                padding = 1;
+            }else{
+                padding = 1;
+            }
+
+            if(redraw)
+                drawGrid(this.grid);
+        }
     }
 
     /**
@@ -86,8 +120,10 @@ class ResizableCanvas extends Canvas {
         g = getGraphicsContext2D();
         g.clearRect(0, 0, width, height);
 
-        int i=0, j=0;
+        //TODO split across threads
+        int i=0, j;
         for(int x=0; x<width; x+=cellSize + padding){
+            j=0;
             for(int y=0; y<height; y+=cellSize + padding){
                 if(grid.getState(new Point(i,j)) == 0){
                     g.setFill(dead);

@@ -1,56 +1,82 @@
 package models.rules;
 
-import com.sun.deploy.security.ruleset.Rule;
 import models.Cell;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by jedrek on 05.05.16.
  * Singleton containing set of rules for a current automaton
  */
-public class RuleSet {
+public class RuleSet implements Serializable{
 
-    private List<IRule> rules = new ArrayList<IRule>();
+    private List<Rule> rules = new ArrayList<Rule>();
     private int cellState;
 
     /**
      * Returns a current list of all Rules.
      * @return Current list of IRules.
      */
-    public List<IRule> getList() {
+    public List<Rule> getList() {
         return rules;
+    }
+
+    public List<RuleSimple> getListSimple(){
+        List<RuleSimple> l= new ArrayList<>();
+
+        for(Rule r : rules){
+            if(r.type() == "simple"){
+                l.add((RuleSimple) r);
+            }
+        }
+        return l;
+    }
+
+    public List<RuleAdvanced> getListAdvanced(){
+        List<RuleAdvanced> l= new ArrayList<>();
+
+        for(Rule r : rules){
+            if(r.type() == "advanced"){
+                l.add((RuleAdvanced) r);
+            }
+        }
+        return l;
     }
     /**
      * Calculates the next state of a Cell based on a set of rules.
+     *
+     * @param oldGrid
      * @param cell
      * @return Next state of a cell
      */
-    public int apply(Cell cell){
+    public Cell apply(HashMap<Point, Cell> oldGrid, Cell cell){
         int outcome;
         cellState = cell.getState();
-        Iterator<IRule> ruleIterator = rules.iterator();
+        Iterator<Rule> ruleIterator = rules.iterator();
         while(ruleIterator.hasNext()){
-            if((outcome = ruleIterator.next().evaluate(cell.getNeighbours())) >= 0) {
+            if((outcome = ruleIterator.next().evaluate(oldGrid, cell)) >= 0) {
                 cellState = outcome;
                 break; // The rules are not supposed to collide so the value can't change
             }
         }
-        return cellState;
+        cell.setState(cellState);
+        return cell;
     }
     /**
      * Validate if a rule can be added to a current set of rules.
      * @param rule
      * @return true if a rule can be added to a set of rules, false otherwise
      */
-    public boolean validateRule(IRule rule){
+    public boolean validateRule(Rule rule){
         if(rule.type().compareTo("simple") == 0){
             RuleSimple ruleSimple = (RuleSimple)rule;
-            IRule currOldRule;
-            Iterator<IRule> ruleIterator = rules.iterator();
+            Rule currOldRule;
+            Iterator<Rule> ruleIterator = rules.iterator();
             while(ruleIterator.hasNext()){
                 //check intersections
                 currOldRule = ruleIterator.next();
@@ -61,9 +87,9 @@ public class RuleSet {
         }
         else{
             RuleAdvanced newRuleAdvanced = (RuleAdvanced) rule;
-            IRule currOldRule;
+            Rule currOldRule;
             RuleAdvanced currOldAdvancedRule;
-            Iterator<IRule> ruleIterator = rules.iterator();
+            Iterator<Rule> ruleIterator = rules.iterator();
             while(ruleIterator.hasNext()){
                 //check intersections
                 currOldRule = ruleIterator.next();
@@ -88,13 +114,7 @@ public class RuleSet {
      * @return TRUE if a Rule can be added to a set of Rules, else FALSE
      */
     private boolean isRuleSimpleCorrect(RuleExact[] old_rule, RuleExact[] new_rule){
-//        for(RuleExact new_exact : new_rule){
-//            for(RuleExact old_exact : old_rule){
-//                if(new_exact.getAliveNeighbours() == old_exact.getAliveNeighbours()
-//                        && new_exact.getOutcome() != old_exact.getOutcome())
-//                    return false;
-//            }
-//        }
+
         for(int i=0; i<new_rule.length; i++){
             for(int j=0; j<old_rule.length; j++){
                 if(new_rule[i].getAliveNeighbours() == old_rule[j].getAliveNeighbours()
@@ -127,7 +147,7 @@ public class RuleSet {
      * @param rule Rule to be added to the set.
      * @return True if the rule is added successfully, False if rejected.
      */
-    public boolean add(IRule rule){
+    public boolean add(Rule rule){
         if(validateRule(rule)) {
             rules.add(rule);
             return true;
@@ -145,7 +165,7 @@ public class RuleSet {
      * Removes provided rule from the set
      * @param rule Rule to be deleted.
      */
-    public void remove(IRule rule){
+    public void remove(Rule rule){
         rules.remove(rule);
     }
 

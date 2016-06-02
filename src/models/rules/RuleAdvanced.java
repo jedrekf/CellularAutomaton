@@ -1,13 +1,19 @@
 package models.rules;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import models.Cell;
+import models.Grid;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by jedrek on 05.05.16.
  */
-public class RuleAdvanced extends IRule {
+public class RuleAdvanced extends Rule implements Serializable{
     private int cells[][] = new int[5][5];
     private int outcome;
     private RuleExact exact[];
@@ -22,6 +28,20 @@ public class RuleAdvanced extends IRule {
         return exact;
     }
 
+    @Override
+    protected void updateItem(Rule item, boolean empty) {
+        Label label = new Label("(empty)");
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(label);
+        super.updateItem(item, empty);
+        setText(null);  // No text in label of super class
+        if (empty) {
+            setGraphic(null);
+        } else {
+            label.setText(item!=null ? "draw some shit here" : "<null>");
+            setGraphic(hbox);
+        }
+    }
     @Override
     public String toString() {
         return "RuleAdvanced{" +
@@ -81,21 +101,25 @@ public class RuleAdvanced extends IRule {
 
     /**
      * Evaluates an outcome for the set of neighbours
-     * @param cellNeighbours
+     * @param grid
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override
-    public int evaluate(Cell[][] cellNeighbours) {
-
-        for(int i=0; i<cellNeighbours.length; i++){
-            for(int j=0; j<cellNeighbours[0].length; j++){
-                if(!(i ==2 && j == 2)) { //we don't count the middle cell
-                    if (cellNeighbours[i][j].getState() != cells[i][j])
+    public int evaluate(HashMap<Point, Cell> grid, Cell cell) {
+        for(int i=-2; i<=2; i++){
+            for(int j=-2; j<2; j++){
+                if(cell.getX()+i >= Grid.getWidth() || cell.getY() + j >=  Grid.getHeight() || cell.getX()+i < 0 || cell.getY()+j < 0){
+                    if(cells[i][j] == 1)
                         return -1;
+                }else {
+                    if (!(i == 2 && j == 2)) { //we don't count the middle cell
+                        if (grid.get(new Point(cell.getX() + i, cell.getY() + j)).getState() != cells[i][j])
+                            return -1;
+                    }
                 }
             }
         }
-        return outcome;
+        return this.outcome;
     }
 
     /**

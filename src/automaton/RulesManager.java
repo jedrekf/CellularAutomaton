@@ -3,29 +3,25 @@ package automaton;
 import automaton.creator.AdvancedRuleCreator;
 import automaton.creator.SimpleRuleCreator;
 import automaton.helper.InformBox;
-import com.sun.deploy.security.ruleset.Rule;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import models.rules.IRule;
+import javafx.util.Callback;
+import models.rules.Rule;
 import models.rules.RuleAdvanced;
 import models.rules.RuleSet;
 import models.rules.RuleSimple;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -34,7 +30,9 @@ import java.util.ResourceBundle;
 public class RulesManager implements Initializable {
     private Stage window;
     private static RuleSet rules;
-    private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
+    private ObservableList<String> observable_rules = FXCollections.observableArrayList();
+    private ObservableList<RuleSimple> observable_simple_rules = FXCollections.observableArrayList();
+    private ObservableList<RuleAdvanced> observable_advanced_rules = FXCollections.observableArrayList();
 
     @FXML
     private ListView<String> listview_rules = new ListView<>();
@@ -50,10 +48,11 @@ public class RulesManager implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        for(IRule rule : rules.getList()){
+        for(Rule rule : rules.getList()){
             observable_rules.add(rule.toString());
         }
         listview_rules.setItems(observable_rules);
+
     }
 
     public RuleSet display() throws Exception{

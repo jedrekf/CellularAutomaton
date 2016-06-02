@@ -1,7 +1,8 @@
 package automaton;
 
+import automaton.file.FileManager;
 import automaton.helper.AlertBox;
-import com.sun.org.apache.xml.internal.security.Init;
+import automaton.helper.InformBox;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,47 +11,61 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Grid;
-import models.rules.IRule;
+import models.rules.Rule;
 import models.rules.RuleSet;
+import sun.awt.X11.Visual;
 
+import java.io.File;
+import java.net.Authenticator;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.Exchanger;
 
 public class Main extends Application implements Initializable{
 
     private Stage window;
     private ResizableCanvas canvas;
     private Grid grid;
+    private int steps;
+    private Visualization v;
     private double mouseX, mouseY;
     private double canvasWidth, canvasHeight;
     private int gridWidth, gridHeight;
     private static RuleSet rules = new RuleSet();
     private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
     private GraphicsContext g;
+    private boolean running;
 
     @FXML
     ScrollPane pane = new ScrollPane();
     @FXML
     private ListView<String> listview_rules = new ListView<>();
+    @FXML
+    Button btn_start ;
+    @FXML
+    Button btn_pause;
+    @FXML
+    Button btn_stop;
+    @FXML
+    TextField txt_steps;
+    @FXML
+    Button btn_step;
+    @FXML
+    MenuItem menu_save;
+    @FXML
+    MenuItem menu_load;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gridWidth = 1000;
-        gridHeight = 1000;
+        gridWidth = 200;
+        gridHeight = 100;
         grid = new Grid(gridWidth, gridHeight);
-
         canvasWidth = 2000;
         canvasHeight = 1000;
         listview_rules.setItems(observable_rules);
@@ -58,6 +73,10 @@ public class Main extends Application implements Initializable{
         canvas.setWidth(canvasWidth);
         canvas.setHeight(canvasHeight);
         pane.setContent(canvas);
+        v= new Visualization(canvas, grid, rules, steps);
+
+        //so that you can't scroll the pane with the mouse scroll
+        pane.setOnScroll(event -> event.consume());
 
         canvas.setOnMouseClicked(event -> {
             mouseX = event.getX();
@@ -66,7 +85,76 @@ public class Main extends Application implements Initializable{
         });
 
         canvas.setOnScroll(event -> {
-            canvas.zoomCanvas(event.getDeltaX());
+            canvas.zoomCanvas(event.getDeltaY());
+        });
+
+        btn_start.setOnMouseClicked(event -> {
+            try {
+                steps = Integer.parseInt(txt_steps.getText());
+                if(steps <= 0 || steps > 100) throw new Exception("Steps should be between <1,100>");
+
+                grid = canvas.getGrid();
+                v= new Visualization(canvas, grid, rules, steps);
+                if(!running) {
+                    Thread t = new Thread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            try {
+                                v.start();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    t.run();
+                }
+
+            }catch(Exception e){
+                InformBox.display("wrong input", "provide step between <1,100>");
+            }
+        });
+        btn_pause.setOnMouseClicked(event -> {
+            v.pause();
+        });
+
+        btn_step.setOnMouseClicked(event -> {
+            try {
+                steps = Integer.parseInt(txt_steps.getText());
+                if (steps <= 0 || steps > 100) throw new Exception("Steps should be between <1,100>");
+                v.step(steps);
+            }catch(Exception e){
+                InformBox.display("wrong input", "provide step between <1,100>");
+            }
+
+        });
+
+        menu_save.setOnAction(event -> {
+            FileChooser choose = new FileChooser();
+            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text doc(*.ca)", "*.ca"));
+            File f = choose.showSaveDialog(window);
+            if(!f.getName().contains(".")) {
+                f = new File(f.getAbsolutePath() + ".ca");
+                String path = (f.getAbsolutePath());
+                FileManager.save(new AutomatonState(grid, rules), path);
+            }
+        });
+
+        menu_load.setOnAction(event -> {
+            FileChooser choose = new FileChooser();
+            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA", "*.ca"));
+            File f = choose.showOpenDialog(window);
+
+                AutomatonState as = (AutomatonState)FileManager.read(f.getAbsolutePath());
+            if( as != null){
+                grid = as.grid;
+                rules = as.rules;
+                for (Rule rule : rules.getList()) {
+                    observable_rules.add(rule.toString());
+                }
+                canvas.drawGrid(grid);
+
+            }
         });
     }
 
@@ -92,9 +180,7 @@ public class Main extends Application implements Initializable{
         Scene scene = new Scene(root);
         window.setScene(scene);
 
-
         window.show();
-        System.out.println("width " + pane.widthProperty() + " height " + pane.heightProperty());
     }
 
     public static void main(String[] args) {
@@ -107,7 +193,7 @@ public class Main extends Application implements Initializable{
         rules = manager.display();
         if(rules != null){
             observable_rules.clear(); //repopulate the list each time it's returned
-            for(IRule rule : rules.getList()) {
+            for(Rule rule : rules.getList()) {
                 observable_rules.add(rule.toString());
             }
         }

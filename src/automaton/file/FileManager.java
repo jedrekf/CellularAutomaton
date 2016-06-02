@@ -1,5 +1,7 @@
 package automaton.file;
 
+import automaton.AutomatonState;
+
 import java.io.*;
 
 /**
@@ -32,7 +34,7 @@ public class FileManager {
      * @param obj Object to be serialized.
      * @param path Relative Path to a file to serialize to Object to.
      */
-    public static void save(Object obj, String path){
+    public static void save(AutomatonState obj, String path){
         try
         {
             FileOutputStream fileOut = new FileOutputStream(path);

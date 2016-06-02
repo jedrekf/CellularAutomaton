@@ -1,16 +1,17 @@
 package models.rules;
 
-import javafx.scene.control.ListCell;
 import models.Cell;
+import models.Grid;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
+import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Created by jedrek on 05.05.16.
  * Rule of format if (more||less) than (#aliveNeighbours) cells alive then (outcome)
  */
-public class RuleSimple extends IRule {
+public class RuleSimple extends Rule implements Serializable{
     private int aliveNeighbours; // 0-24
     private String condition; // less ||  more
     private int outcome; // 0 dead, 1 alive
@@ -31,6 +32,13 @@ public class RuleSimple extends IRule {
         return exacts;
     }
 
+    @Override
+    protected void updateItem(Rule t, boolean bln) {
+        super.updateItem(t, bln);
+        if (t != null) {
+            setText(t.toString());
+        }
+    }
     @Override
     public String toString() {
         return "RuleSimple{" +
@@ -80,8 +88,8 @@ public class RuleSimple extends IRule {
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override
-    public int evaluate(Cell[][] cellNeighbours) {
-        currAliveCount = countAlive(cellNeighbours);
+    public int evaluate(HashMap<Point, Cell> grid, Cell cell) {
+        currAliveCount = countAlive(grid, cell);
 
         if(condition.compareTo("less") == 0){
             if(currAliveCount < aliveNeighbours)
@@ -105,15 +113,20 @@ public class RuleSimple extends IRule {
     }
     /**
      * Counts Alive cells excluding the current(middle) cell
-     * @param cellNeighbours
+     * @param grid
+     * @param cell
      * @return  number of cells alive in the neighbourhood of a cell
      */
-    private int countAlive(Cell[][] cellNeighbours){
+    private int countAlive(HashMap<Point, Cell> grid, Cell cell){
         int counter = 0;
-        for(int i=0; i<cellNeighbours.length; i++ ){
-            for(int j=0; j<cellNeighbours[0].length; j++){
-                if(cellNeighbours[i][j].getState() == 1 && (!(i == 2 && j == 2))){ //we don't count the middle cell(current)
-                    counter++;
+        for(int i=-2; i<=2; i++){
+            for(int j=-2; j<2; j++){
+                if(cell.getX()+i >= Grid.getWidth() || cell.getY() + j >=  Grid.getHeight() || cell.getX()+i < 0 || cell.getY()+j < 0){
+                }else {
+                    if (!(i == 2 && j == 2)) { //we don't count the middle cell
+                        if (grid.get(new Point(cell.getX() + i, cell.getY() + j)).getState() == 1)
+                            counter++;
+                    }
                 }
             }
         }

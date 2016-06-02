@@ -3,6 +3,7 @@ package models;
 import models.rules.RuleSet;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +11,16 @@ import java.util.Map;
 /**
  * Created by jedrek on 05.05.16.
  */
-public class Grid {
-    private int width, height;
+public class Grid implements Serializable{
+    public static int getWidth() {
+        return width;
+    }
+
+    public static int getHeight() {
+        return height;
+    }
+
+    private static int width, height;
     private HashMap<Point, Cell> grid = new HashMap<>();
     private HashMap<Point, Cell> oldGrid;
     private ArrayList gridHistory = new ArrayList<HashMap<Point, Cell>>();
@@ -52,21 +61,27 @@ public class Grid {
     }
 
     public void iterate(RuleSet rules){
-        oldGrid = grid;
-        Cell currCell = new Cell();
+        oldGrid = new HashMap<Point, Cell>(grid);
+
+        Cell currCell;
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
-                currCell.setNeighbours(findNeighbours(i,j));
-                currCell.setState(rules.apply(currCell)); // here the rules are applied to the cell of a grid
+                //currCell.setNeighbours(findNeighbours(i,j));
+                //currCell.setState(rules.apply(currCell)); // here the rules are applied to the cell of a grid
+                currCell = oldGrid.get(new Point(i,j));
+                currCell.setX(i);
+                currCell.setY(j);
+                currCell = rules.apply(oldGrid, currCell);
                 grid.put(points[i][j], currCell);
             }
         }
     }
 
-    public void iterate(RuleSet rules, int steps){
+    public Grid iterate(RuleSet rules, int steps){
         for(int i=0;i<steps;i++){
             iterate(rules);
         }
+        return this;
     }
 
     public Cell[][] findNeighbours(int x, int y){
@@ -74,11 +89,16 @@ public class Grid {
         int v=0, w=0;
 
         for(int i=-2; i <= 2; i++){
+            w = 0;
             for(int j=-2; j <= 2; j++){
-                if(oldGrid.containsKey(points[x+i][y+j])) {
-                    neighbours[v][w] = oldGrid.get(points[x + i][y + j]);
-                }else{
+                if(x+i >= width || y+j >= height || x+i < 0 || y+j < 0){
                     neighbours[v][w] = new Cell();
+                }else {
+                    if (oldGrid.containsKey(points[x + i][y + j])) {
+                        neighbours[v][w] = oldGrid.get(points[x + i][y + j]);
+                    } else {
+                        neighbours[v][w] = new Cell();
+                    }
                 }
                 w++;
             }
