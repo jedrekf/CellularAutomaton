@@ -7,7 +7,7 @@ import java.util.Arrays;
 /**
  * Created by jedrek on 05.05.16.
  */
-public class RuleAdvanced implements IRule {
+public class RuleAdvanced extends IRule {
     private int cells[][] = new int[5][5];
     private int outcome;
     private RuleExact exact[];

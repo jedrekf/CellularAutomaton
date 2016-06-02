@@ -10,7 +10,7 @@ import java.util.List;
  * Created by jedrek on 05.05.16.
  * Rule of format if (more||less) than (#aliveNeighbours) cells alive then (outcome)
  */
-public class RuleSimple extends ListCell<String> implements IRule {
+public class RuleSimple extends IRule {
     private int aliveNeighbours; // 0-24
     private String condition; // less ||  more
     private int outcome; // 0 dead, 1 alive

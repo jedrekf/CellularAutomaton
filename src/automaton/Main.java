@@ -51,7 +51,7 @@ public class Main extends Application implements Initializable{
         gridHeight = 1000;
         grid = new Grid(gridWidth, gridHeight);
 
-        canvasWidth = 1000;
+        canvasWidth = 2000;
         canvasHeight = 1000;
         listview_rules.setItems(observable_rules);
         canvas = new ResizableCanvas(grid);
