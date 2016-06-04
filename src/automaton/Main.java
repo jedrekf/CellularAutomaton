@@ -13,6 +13,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Grid;
@@ -30,12 +33,11 @@ public class Main extends Application implements Initializable{
 
     private Stage window;
     private ResizableCanvas canvas;
-    private Grid grid;
+    private Grid grid ;
+    private int gridWidth = 500, gridHeight = 400;
     private int steps;
     private Visualization v;
     private double mouseX, mouseY;
-    private double canvasWidth, canvasHeight;
-    private int gridWidth, gridHeight;
     private static RuleSet rules = new RuleSet();
     private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
     private GraphicsContext g;
@@ -56,6 +58,8 @@ public class Main extends Application implements Initializable{
     @FXML
     Button btn_step;
     @FXML
+    Button btn_clear_grid;
+    @FXML
     MenuItem menu_save;
     @FXML
     MenuItem menu_load;
@@ -63,20 +67,17 @@ public class Main extends Application implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        gridWidth = 200;
-        gridHeight = 100;
         grid = new Grid(gridWidth, gridHeight);
-        canvasWidth = 2000;
-        canvasHeight = 1000;
         listview_rules.setItems(observable_rules);
         canvas = new ResizableCanvas(grid);
-        canvas.setWidth(canvasWidth);
-        canvas.setHeight(canvasHeight);
+        canvas.setWidth(2000);
+        canvas.setHeight(1000);
         pane.setContent(canvas);
         v= new Visualization(canvas, grid, rules, steps);
 
         //so that you can't scroll the pane with the mouse scroll
         pane.setOnScroll(event -> event.consume());
+        pane.setOnDragDone(event -> event.consume());
 
         canvas.setOnMouseClicked(event -> {
             mouseX = event.getX();
@@ -96,15 +97,11 @@ public class Main extends Application implements Initializable{
                 grid = canvas.getGrid();
                 v= new Visualization(canvas, grid, rules, steps);
                 if(!running) {
-                    Thread t = new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-                                v.start();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                    Thread t = new Thread(() -> {
+                        try {
+                            v.start();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     });
                     t.run();
@@ -127,6 +124,11 @@ public class Main extends Application implements Initializable{
                 InformBox.display("wrong input", "provide step between <1,100>");
             }
 
+        });
+
+        btn_clear_grid.setOnAction(event -> {
+            grid = new Grid(gridWidth, gridHeight);
+            canvas.drawGrid(grid);
         });
 
         menu_save.setOnAction(event -> {

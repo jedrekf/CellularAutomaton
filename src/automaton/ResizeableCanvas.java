@@ -16,7 +16,7 @@ class ResizableCanvas extends Canvas {
     private GraphicsContext g;
     private double cellSize=20;
     private double padding = 1;
-    public Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK;
+    public Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK, blank = Color.WHITE;
 
     /**
      * Returns current grid of a canvas.
@@ -43,25 +43,32 @@ class ResizableCanvas extends Canvas {
      * @param delta Zoom in/out amount.
      */
     public void zoomCanvas(double delta) {
+        double newWidth, newHeight;
         redraw = true;
+        padding = 1;
         if(delta != 0) {
             cellSize += delta/40;
             if(cellSize < 3){
-                if(cellSize < 1){
+                padding = 0;
+                redraw = true;
+                if(cellSize < 1) {
                     cellSize = 1;
                     redraw = false;
                 }
-                padding = 0;
-            }else if(cellSize > 100){
-                cellSize += delta/10;
-                if(cellSize > 500){
-                    cellSize = 500;
-                    redraw = false;
-                }
-                padding = 1;
-            }else{
-                padding = 1;
             }
+            else if(cellSize >= 1 && cellSize <= 300){
+                    redraw = true;
+            }
+            else if(cellSize > 300){
+                cellSize = 500;
+                redraw = false;
+            }
+            if((newWidth = Grid.getWidth() * (cellSize + padding)) > 4000)
+                newWidth = 3000;
+            if ((newHeight = Grid.getHeight() * (cellSize + padding)) > 2000)
+                newHeight = 2000;
+            this.setWidth(newWidth);
+            this.setHeight(newHeight);
 
             if(redraw)
                 drawGrid(this.grid);
@@ -79,7 +86,7 @@ class ResizableCanvas extends Canvas {
 
         x = (int) mouseX / (int) (cellSize + padding);
         y = (int) mouseY / (int) (cellSize + padding);
-        if(grid.toggleState(new Point(x,y)) == 0) {
+        if(grid.toggleState(new Point(x,y)) != 1) {
             g.setFill(dead);
         }else{
             g.setFill(alive);
@@ -116,6 +123,7 @@ class ResizableCanvas extends Canvas {
         grid = _grid;
         double width = getWidth();
         double height = getHeight();
+        int state = 0;
 
         g = getGraphicsContext2D();
         g.clearRect(0, 0, width, height);
@@ -125,9 +133,13 @@ class ResizableCanvas extends Canvas {
         for(int x=0; x<width; x+=cellSize + padding){
             j=0;
             for(int y=0; y<height; y+=cellSize + padding){
-                if(grid.getState(new Point(i,j)) == 0){
+                if((state = grid.getState(new Point(i,j))) == 0){
                     g.setFill(dead);
-                }else{
+                }
+                else if(state == -1){
+                    g.setFill(blank);
+                }
+                else{
                     g.setFill(alive);
                 }
 

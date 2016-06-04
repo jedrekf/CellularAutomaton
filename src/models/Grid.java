@@ -27,6 +27,8 @@ public class Grid implements Serializable{
     public Point[][] points;
 
     public int getState(Point p){
+        if(p.getX() >= getWidth() || p.getY() >= getHeight())
+            return -1;
        return grid.get(p).getState();
     }
 
@@ -36,6 +38,9 @@ public class Grid implements Serializable{
      * @return new Cell state value
      */
     public int toggleState(Point p){
+        if(p.getX() >= getWidth() || p.getY() >= getHeight())
+            return -1;
+
         Cell cell = grid.get(p);
         if(cell.getState()==0){
             cell.setState(1);
