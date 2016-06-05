@@ -39,6 +39,9 @@ public class RuleSimple extends Rule implements Serializable{
             setText(t.toString());
         }
     }
+
+
+
     @Override
     public String toString() {
         return "RuleSimple{" +
@@ -84,7 +87,8 @@ public class RuleSimple extends Rule implements Serializable{
     }
     /**
      * Evaluates an outcome for the set of neighbours
-     * @param cellNeighbours
+     * @param grid
+     * @param cell
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override

@@ -32,14 +32,20 @@
    <right>
       <VBox alignment="CENTER" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="TOP_LEFT" text="List of current rules.">
+            <Label alignment="TOP_LEFT" text="List of simple rules.">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin></Label>
-            <ListView fx:id="listview_rules" />
+            <ListView fx:id="listview_rules_simple" />
+            <Label alignment="TOP_LEFT" layoutX="68.0" layoutY="20.0" text="List of advanced rules.">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <ListView fx:id="listview_rules_advanced" layoutX="15.0" layoutY="86.0" />
             <Button mnemonicParsing="false" onAction="#manageRules" text="Manage Rules">
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

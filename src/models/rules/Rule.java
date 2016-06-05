@@ -22,7 +22,7 @@ public abstract class Rule extends ListCell<Rule> implements Serializable{
 
     /**
      * Get type of a rule ("advanced" / "simple")
-     * @return
+     * @return "advanced" / "simple"
      */
     public abstract String type();
 

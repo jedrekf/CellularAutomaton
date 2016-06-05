@@ -6,21 +6,26 @@ import automaton.helper.InformBox;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import models.Grid;
 import models.rules.Rule;
+import models.rules.RuleAdvanced;
 import models.rules.RuleSet;
+import models.rules.RuleSimple;
 import sun.awt.X11.Visual;
 
 import java.io.File;
@@ -39,14 +44,17 @@ public class Main extends Application implements Initializable{
     private Visualization v;
     private double mouseX, mouseY;
     private static RuleSet rules = new RuleSet();
-    private ObservableList<String> observable_rules = FXCollections.observableArrayList();;
+    private ObservableList<RuleSimple> observable_simple_rules = FXCollections.observableArrayList();
+    private ObservableList<RuleAdvanced> observable_advanced_rules = FXCollections.observableArrayList();
     private GraphicsContext g;
     private boolean running;
 
     @FXML
     ScrollPane pane = new ScrollPane();
     @FXML
-    private ListView<String> listview_rules = new ListView<>();
+    private ListView<RuleSimple> listview_rules_simple = new ListView<>();
+    @FXML
+    private ListView<RuleAdvanced> listview_rules_advanced = new ListView<>();
     @FXML
     Button btn_start ;
     @FXML
@@ -68,16 +76,64 @@ public class Main extends Application implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         grid = new Grid(gridWidth, gridHeight);
-        listview_rules.setItems(observable_rules);
+        listview_rules_simple.setItems(observable_simple_rules);
+        listview_rules_simple.setCellFactory(lv  -> new ListCell<RuleSimple>(){
+            @Override
+            public void updateItem(RuleSimple item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    String text = item.toString();
+                    setText(text);
+                }
+            }
+        });
+        listview_rules_advanced.setItems(observable_advanced_rules);
+        listview_rules_advanced.setCellFactory(lv  -> new ListCell<RuleAdvanced>(){
+            @Override
+            public void updateItem(RuleAdvanced item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    String text = (item.getOutcome() == 1) ? "Then the cell is alive." : "Then the cell is dead.";
+                    int cellSize = 10;
+                    Canvas canvas = new Canvas((cellSize+1)*5, (cellSize+1)*5);
+                    GraphicsContext g = canvas.getGraphicsContext2D();
+                    g.clearRect(0, 0, cellSize*5, cellSize*5);
+                    int cells[][] = item.getCells();
+
+                    for(int i=0; i<cells.length; i++){
+                        for (int j = 0; j < cells[0].length; j++) {
+                            if(cells[i][j] == 1){
+                                g.setFill(Color.BLACK);
+                                g.fillRect(i*(cellSize+1),j*(cellSize+1),cellSize,cellSize);
+                            }else if (i == 2 && j == 2){
+                                g.setFill(new Color(0.0, 0.8, 0.0, 1));
+                                g.fillRect(i*(cellSize+1),j*(cellSize+1),cellSize,cellSize);
+                            }else{
+                                g.setFill(new Color(0.9, 0.9, 0.9, 1));
+                                g.fillRect(i*(cellSize+1),j*(cellSize+1),cellSize,cellSize);
+                            }
+                        }
+                    }
+                    setGraphic(canvas);
+                    setText(text);
+                }
+            }
+        });
+
         canvas = new ResizableCanvas(grid);
         canvas.setWidth(2000);
         canvas.setHeight(1000);
         pane.setContent(canvas);
         v= new Visualization(canvas, grid, rules, steps);
 
+
         //so that you can't scroll the pane with the mouse scroll
-        pane.setOnScroll(event -> event.consume());
-        pane.setOnDragDone(event -> event.consume());
+        pane.setOnScroll(Event::consume);
+        pane.setOnDragDone(Event::consume);
 
         canvas.setOnMouseClicked(event -> {
             mouseX = event.getX();
@@ -152,7 +208,7 @@ public class Main extends Application implements Initializable{
                 grid = as.grid;
                 rules = as.rules;
                 for (Rule rule : rules.getList()) {
-                    observable_rules.add(rule.toString());
+                    observable_simple_rules.add((RuleSimple) rule);
                 }
                 canvas.drawGrid(grid);
 
@@ -194,10 +250,14 @@ public class Main extends Application implements Initializable{
         RulesManager manager = new RulesManager(rules);
         rules = manager.display();
         if(rules != null){
-            observable_rules.clear(); //repopulate the list each time it's returned
+            observable_advanced_rules.clear(); //repopulate the list each time it's returned
+            observable_simple_rules.clear();
             for(Rule rule : rules.getList()) {
-                observable_rules.add(rule.toString());
+                if(rule.type() == "advanced") observable_advanced_rules.add((RuleAdvanced) rule);
+                else if(rule.type() == "simple") observable_simple_rules.add((RuleSimple) rule);
             }
+            listview_rules_simple.refresh();
+            listview_rules_advanced.refresh();
         }
     }
 
