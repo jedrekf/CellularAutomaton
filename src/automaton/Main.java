@@ -193,10 +193,12 @@ public class Main extends Application implements Initializable{
         btn_clear_grid.setOnAction(event -> {
             grid.clear();
             canvas.drawGrid(grid);
+            v.pause();
             v.unlock();
         });
 
         menu_save_grid.setOnAction(event -> {
+            v.pause();
             FileChooser choose = new FileChooser();
             choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA GRID", "*.ca_grid"));
 
@@ -208,6 +210,7 @@ public class Main extends Application implements Initializable{
             }
         });
         menu_save_rules.setOnAction(event -> {
+            v.pause();
             FileChooser choose = new FileChooser();
             choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA RULES", "*.ca_rules"));
 
@@ -219,6 +222,7 @@ public class Main extends Application implements Initializable{
             }
         });
         menu_load.setOnAction(event -> {
+            v.pause();
             FileChooser choose = new FileChooser();
             choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CellularAutomaton Files", "*.ca_grid", "*.ca_rules"));
             //choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA RULES", "*.ca_rules"));
@@ -237,10 +241,14 @@ public class Main extends Application implements Initializable{
                     if(tmpRules != null){
                         rules = tmpRules;
                         for (Rule rule : rules.getList()) {
-                            if(rule.type() == "simple")
+                            if(rule.type() == "simple") {
+                                observable_simple_rules.clear();
                                 observable_simple_rules.add((RuleSimple) rule);
-                            else
+                            }
+                            else {
+                                observable_advanced_rules.clear();
                                 observable_advanced_rules.add((RuleAdvanced) rule);
+                            }
                         }
                     }
                 }
