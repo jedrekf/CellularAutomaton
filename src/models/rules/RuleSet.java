@@ -50,16 +50,15 @@ public class RuleSet implements Serializable{
     /**
      * Calculates the next state of a Cell based on a set of rules.
      *
-     * @param oldGrid
      * @param cell
      * @return Next state of a cell
      */
-    public Cell apply(HashMap<Point, Cell> oldGrid, Cell cell){
+    public Cell apply(Cell cell){
         int outcome;
         cellState = cell.getState();
         Iterator<Rule> ruleIterator = rules.iterator();
         while(ruleIterator.hasNext()){
-            if((outcome = ruleIterator.next().evaluate(oldGrid, cell)) >= 0) {
+            if((outcome = ruleIterator.next().evaluate(cell)) >= 0) {
                 cellState = outcome;
                 break; // The rules are not supposed to collide so the value can't change
             }

@@ -63,7 +63,7 @@ public class AdvancedRuleCreator implements Initializable {
 
             for(int i=0; i< 5; i++){
                 for (int j = 0; j < 5; j++) {
-                    ToggleButton btn = (ToggleButton)getNodeFromGridPane(grid_pane, j, i);
+                    ToggleButton btn = (ToggleButton)getNodeFromGridPane(grid_pane, i, j);
                     if(btn.isSelected()){
                         cells[i][j] = new Cell(1);
                     }else{

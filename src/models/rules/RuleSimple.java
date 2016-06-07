@@ -9,13 +9,12 @@ import java.util.HashMap;
 
 /**
  * Created by jedrek on 05.05.16.
- * Rule of format if (more||less) than (#aliveNeighbours) cells alive then (outcome)
+ * Rule of format if (more||less||exactly) than (#aliveNeighbours) cells alive then (outcome)
  */
 public class RuleSimple extends Rule implements Serializable{
     private int aliveNeighbours; // 0-24
-    private String condition; // less ||  more
+    private String condition; // less ||  more || exactly
     private int outcome; // 0 dead, 1 alive
-    private int currAliveCount;
     private RuleExact exacts[];
 
 
@@ -32,23 +31,23 @@ public class RuleSimple extends Rule implements Serializable{
         return exacts;
     }
 
-    @Override
-    protected void updateItem(Rule t, boolean bln) {
-        super.updateItem(t, bln);
-        if (t != null) {
-            setText(t.toString());
-        }
-    }
-
-
 
     @Override
     public String toString() {
-        return "RuleSimple{" +
-                "aliveNeighbours=" + aliveNeighbours +
-                ", condition='" + condition + '\'' +
-                ", outcome=" + outcome +
-                '}';
+        String text;
+        text = "If " + condition + " ";
+        if(condition == "exactly"){
+            text += aliveNeighbours + " neighbours then the cell is ";
+        }else{
+            text += "than " + aliveNeighbours + " neighbours then the cell is ";
+        }
+        if(outcome == 1){
+            text += "alive.";
+        }else{
+            text += "dead.";
+        }
+
+        return text;
     }
 
     /**
@@ -75,34 +74,36 @@ public class RuleSimple extends Rule implements Serializable{
             for (int i = 0; i < alive; i++){
                 localExacts[i] = new RuleExact(i, outcome);
             }
-        }else{
+        }else if(condition.compareTo("more") == 0){
             localExacts = new RuleExact[24-alive];
             int i=0;
             for(int j=alive+1; j <= 24; j++){
                 localExacts[i] = new RuleExact(j, outcome);
                 i++;
             }
+        }else{
+            localExacts = new RuleExact[1];
+            localExacts[0] = new RuleExact(alive, outcome);
         }
         return localExacts;
     }
     /**
      * Evaluates an outcome for the set of neighbours
-     * @param grid
      * @param cell
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override
-    public int evaluate(HashMap<Point, Cell> grid, Cell cell) {
-        currAliveCount = countAlive(grid, cell);
+    public int evaluate(Cell cell) {
 
         if(condition.compareTo("less") == 0){
-            if(currAliveCount < aliveNeighbours)
+            if(cell.getAliveNeighboursCount() < aliveNeighbours)
                 return outcome;
         }else if(condition.compareTo("more") == 0){
-            if(currAliveCount > aliveNeighbours)
+            if(cell.getAliveNeighboursCount() > aliveNeighbours)
                 return outcome;
         }else{
-            System.out.println("undefined rule");
+            if(cell.getAliveNeighboursCount() == aliveNeighbours)
+                return outcome;
         }
 
         return -1; // the rule wasn't applied
@@ -115,25 +116,5 @@ public class RuleSimple extends Rule implements Serializable{
     public String type() {
         return "simple";
     }
-    /**
-     * Counts Alive cells excluding the current(middle) cell
-     * @param grid
-     * @param cell
-     * @return  number of cells alive in the neighbourhood of a cell
-     */
-    private int countAlive(HashMap<Point, Cell> grid, Cell cell){
-        int counter = 0;
-        for(int i=-2; i<=2; i++){
-            for(int j=-2; j<2; j++){
-                if(cell.getX()+i >= Grid.getWidth() || cell.getY() + j >=  Grid.getHeight() || cell.getX()+i < 0 || cell.getY()+j < 0){
-                }else {
-                    if (!(i == 2 && j == 2)) { //we don't count the middle cell
-                        if (grid.get(new Point(cell.getX() + i, cell.getY() + j)).getState() == 1)
-                            counter++;
-                    }
-                }
-            }
-        }
-        return counter;
-    }
+
 }

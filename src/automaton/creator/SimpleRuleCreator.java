@@ -39,8 +39,8 @@ public class SimpleRuleCreator implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> options_combo_amount = FXCollections.observableArrayList("more than","less than");
-        combo_amount.setValue(options_combo_amount.get(0));
+        ObservableList<String> options_combo_amount = FXCollections.observableArrayList("more than","less than", "exactly");
+        combo_amount.setValue(options_combo_amount.get(2));
         combo_amount.setItems(options_combo_amount);
 
         ObservableList<String> options_combo_outcome = FXCollections.observableArrayList("alive","dead");
@@ -54,6 +54,8 @@ public class SimpleRuleCreator implements Initializable {
                 condition = "more";
             }else if(combo_amount.getValue() == "less than"){
                 condition = "less";
+            }else{
+                condition = "exactly";
             }
             if(combo_outcome.getValue() == "dead"){
                 outcome = 0;
@@ -62,7 +64,7 @@ public class SimpleRuleCreator implements Initializable {
             }
             try {
                 aliveNeighbours = Integer.parseInt(txt_cell_count.getText());
-                if(aliveNeighbours < 1 || aliveNeighbours > 23){
+                if(aliveNeighbours < 0 || aliveNeighbours > 24){
                     InformBox.display("Wrong input!", "Put the value between 0-24");
                 }else{
                     newRuleSimple = new RuleSimple(aliveNeighbours, condition, outcome);

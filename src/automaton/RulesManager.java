@@ -3,23 +3,28 @@ package automaton;
 import automaton.creator.AdvancedRuleCreator;
 import automaton.creator.SimpleRuleCreator;
 import automaton.helper.InformBox;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -72,28 +77,22 @@ public class RulesManager implements Initializable {
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
+                    setGraphic(null);
                 } else {
-                    //DELETION HANDLE
-                    item.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            System.out.println("clicked");
-                            if(event.getButton().equals(MouseButton.PRIMARY)){
-                                if(event.getClickCount() == 2){
-                                    rules.remove(item);
-                                    listview_rules_simple.getItems().remove(item);
-                                    observable_simple_rules.remove(item);
-                                    System.out.println("item removed");
-                                }
-                            }
-                        }
+                    HBox hbox = new HBox();
+                    Button btn_del = new Button("del");
 
+                    btn_del.setOnAction(event -> {
+                        rules.remove(item);
+                        listview_rules_simple.getItems().remove(item);
+                        observable_simple_rules.remove(item);
                     });
                     String text = item.toString(); // get text from item
-                    setText(text);
 
+                    hbox.setAlignment(Pos.CENTER);
+                    hbox.getChildren().addAll(new Label(text), btn_del);
 
-
+                    setGraphic(hbox);
                 }
             }
         });
@@ -105,20 +104,16 @@ public class RulesManager implements Initializable {
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
+                    setGraphic(null);
                 } else {
-                    //DELETION HANDLE
-                    item.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            if(event.getButton().equals(MouseButton.PRIMARY)){
-                                if(event.getClickCount() == 2){
-                                    rules.remove(item);
-                                    listview_rules_advanced.getItems().remove(item);
-                                    observable_advanced_rules.remove(item);
-                                }
-                            }
-                        }
+                    HBox hbox = new HBox();
+                    Button btn_del = new Button("del");
+                    btn_del.setOnAction(event -> {
+                        rules.remove(item);
+                        listview_rules_advanced.getItems().remove(item);
+                        observable_advanced_rules.remove(item);
                     });
+
                     String text = (item.getOutcome() == 1) ? "Then the cell is alive." : "Then the cell is dead.";
 
                     int cellSize = 10;
@@ -141,9 +136,8 @@ public class RulesManager implements Initializable {
                             }
                         }
                     }
-                    setGraphic(canvas);
-                    setText(text);
-
+                    hbox.getChildren().addAll(canvas, new Label(text), btn_del);
+                    setGraphic(hbox);
                 }
             }
         });
@@ -172,6 +166,7 @@ public class RulesManager implements Initializable {
         if(simple != null) {
             if(rules.add(simple)) {
                 observable_simple_rules.add(simple);
+                listview_rules_simple.refresh();
             }else{
                 InformBox.display("Rule collision", "Can't add the rule, it collides with existing ones.");
             }
@@ -188,6 +183,7 @@ public class RulesManager implements Initializable {
         if(advanced != null) {
             if(rules.add(advanced)) {
                 observable_advanced_rules.add(advanced);
+                listview_rules_advanced.refresh();
             }else{
                 InformBox.display("Rule collision", "Can't add the rule, it collides with existing ones.");
             }

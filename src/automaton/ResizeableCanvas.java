@@ -13,7 +13,6 @@ import java.awt.*;
 class ResizableCanvas extends Canvas {
     private Grid grid;
     private boolean redraw = true;
-    private GraphicsContext g;
     private double cellSize=20;
     private double padding = 1;
     public Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK, blank = Color.WHITE;
@@ -83,10 +82,10 @@ class ResizableCanvas extends Canvas {
      */
     public Grid clickCell(double mouseX, double mouseY) {
         int x, y;
-
+        GraphicsContext g = getGraphicsContext2D();
         x = (int) mouseX / (int) (cellSize + padding);
         y = (int) mouseY / (int) (cellSize + padding);
-        if(grid.toggleState(new Point(x,y)) != 1) {
+        if(grid.toggleState(x, y) != 1) {
             g.setFill(dead);
         }else{
             g.setFill(alive);
@@ -103,7 +102,7 @@ class ResizableCanvas extends Canvas {
         double width = getWidth();
         double height = getHeight();
 
-        g = getGraphicsContext2D();
+        GraphicsContext g = getGraphicsContext2D();
         g.clearRect(0, 0, width, height);
 
         g.setFill(dead);
@@ -125,7 +124,7 @@ class ResizableCanvas extends Canvas {
         double height = getHeight();
         int state = 0;
 
-        g = getGraphicsContext2D();
+        GraphicsContext g = getGraphicsContext2D();
         g.clearRect(0, 0, width, height);
 
         //TODO split across threads
@@ -133,7 +132,7 @@ class ResizableCanvas extends Canvas {
         for(int x=0; x<width; x+=cellSize + padding){
             j=0;
             for(int y=0; y<height; y+=cellSize + padding){
-                if((state = grid.getState(new Point(i,j))) == 0){
+                if((state = grid.getState(i,j)) == 0){
                     g.setFill(dead);
                 }
                 else if(state == -1){

@@ -39,7 +39,7 @@ public class Main extends Application implements Initializable{
     private Stage window;
     private ResizableCanvas canvas;
     private Grid grid ;
-    private int gridWidth = 500, gridHeight = 400;
+    private int gridWidth = 600, gridHeight = 600;
     private int steps;
     private Visualization v;
     private double mouseX, mouseY;
@@ -47,7 +47,7 @@ public class Main extends Application implements Initializable{
     private ObservableList<RuleSimple> observable_simple_rules = FXCollections.observableArrayList();
     private ObservableList<RuleAdvanced> observable_advanced_rules = FXCollections.observableArrayList();
     private GraphicsContext g;
-    private boolean running;
+    private Thread t;
 
     @FXML
     ScrollPane pane = new ScrollPane();
@@ -68,7 +68,9 @@ public class Main extends Application implements Initializable{
     @FXML
     Button btn_clear_grid;
     @FXML
-    MenuItem menu_save;
+    MenuItem menu_save_grid;
+    @FXML
+    MenuItem menu_save_rules;
     @FXML
     MenuItem menu_load;
 
@@ -83,6 +85,7 @@ public class Main extends Application implements Initializable{
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
+                    setGraphic(null);
                 } else {
                     String text = item.toString();
                     setText(text);
@@ -96,6 +99,7 @@ public class Main extends Application implements Initializable{
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
+                    setGraphic(null);
                 } else {
                     String text = (item.getOutcome() == 1) ? "Then the cell is alive." : "Then the cell is dead.";
                     int cellSize = 10;
@@ -128,12 +132,14 @@ public class Main extends Application implements Initializable{
         canvas.setWidth(2000);
         canvas.setHeight(1000);
         pane.setContent(canvas);
-        v= new Visualization(canvas, grid, rules, steps);
-
+        v = new Visualization(canvas, grid, rules);
 
         //so that you can't scroll the pane with the mouse scroll
-        pane.setOnScroll(Event::consume);
+        pane.setOnScroll(event -> {
+            event.consume();
+        });
         pane.setOnDragDone(Event::consume);
+        pane.setOnMouseDragExited(event -> event.consume());
 
         canvas.setOnMouseClicked(event -> {
             mouseX = event.getX();
@@ -146,72 +152,98 @@ public class Main extends Application implements Initializable{
         });
 
         btn_start.setOnMouseClicked(event -> {
-            try {
-                steps = Integer.parseInt(txt_steps.getText());
-                if(steps <= 0 || steps > 100) throw new Exception("Steps should be between <1,100>");
-
-                grid = canvas.getGrid();
-                v= new Visualization(canvas, grid, rules, steps);
-                if(!running) {
-                    Thread t = new Thread(() -> {
-                        try {
-                            v.start();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                    t.run();
+            t = new Thread(() -> {
+                try {
+                    v.start();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-
-            }catch(Exception e){
-                InformBox.display("wrong input", "provide step between <1,100>");
-            }
+            });
+            t.run();
         });
         btn_pause.setOnMouseClicked(event -> {
             v.pause();
         });
-
+        btn_stop.setOnAction(event -> {
+            v.stop();
+        });
         btn_step.setOnMouseClicked(event -> {
             try {
                 steps = Integer.parseInt(txt_steps.getText());
-                if (steps <= 0 || steps > 100) throw new Exception("Steps should be between <1,100>");
-                v.step(steps);
             }catch(Exception e){
-                InformBox.display("wrong input", "provide step between <1,100>");
+                InformBox.display("wrong input", "provide step between <1,20>");
+                return;
             }
 
+            if (steps <= 0 || steps > 20)
+                InformBox.display("wrong input", "provide step between <1,20>");
+            else {
+                t = new Thread(() -> {
+                    try {
+                        v.step(steps);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+                t.run();
+
+            }
         });
 
         btn_clear_grid.setOnAction(event -> {
-            grid = new Grid(gridWidth, gridHeight);
+            grid.clear();
             canvas.drawGrid(grid);
+            v.unlock();
         });
 
-        menu_save.setOnAction(event -> {
+        menu_save_grid.setOnAction(event -> {
             FileChooser choose = new FileChooser();
-            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text doc(*.ca)", "*.ca"));
+            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA GRID", "*.ca_grid"));
+
             File f = choose.showSaveDialog(window);
             if(!f.getName().contains(".")) {
-                f = new File(f.getAbsolutePath() + ".ca");
+                f = new File(f.getAbsolutePath() + ".ca_grid");
                 String path = (f.getAbsolutePath());
-                FileManager.save(new AutomatonState(grid, rules), path);
+                FileManager.saveGrid(grid, path);
             }
         });
+        menu_save_rules.setOnAction(event -> {
+            FileChooser choose = new FileChooser();
+            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA RULES", "*.ca_rules"));
 
+            File f = choose.showSaveDialog(window);
+            if(!f.getName().contains(".")) {
+                f = new File(f.getAbsolutePath() + ".ca_rules");
+                String path = (f.getAbsolutePath());
+                FileManager.saveRules(rules, path);
+            }
+        });
         menu_load.setOnAction(event -> {
             FileChooser choose = new FileChooser();
-            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA", "*.ca"));
+            choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CellularAutomaton Files", "*.ca_grid", "*.ca_rules"));
+            //choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA RULES", "*.ca_rules"));
             File f = choose.showOpenDialog(window);
-
-                AutomatonState as = (AutomatonState)FileManager.read(f.getAbsolutePath());
-            if( as != null){
-                grid = as.grid;
-                rules = as.rules;
-                for (Rule rule : rules.getList()) {
-                    observable_simple_rules.add((RuleSimple) rule);
+            if(f != null) {
+                String fileName= f.getName();
+                String fileExtension = fileName.substring(fileName.indexOf(".") + 1, fileName.length());
+                if(fileExtension.compareTo("ca_grid") == 0){
+                    Grid tmpGrid = (Grid) FileManager.read(f.getAbsolutePath());
+                    if(tmpGrid != null){
+                        grid = tmpGrid;
+                        canvas.drawGrid(grid);
+                    }
+                }else if(fileExtension.compareTo("ca_rules") == 0){
+                    RuleSet tmpRules = (RuleSet) FileManager.read(f.getAbsolutePath());
+                    if(tmpRules != null){
+                        rules = tmpRules;
+                        for (Rule rule : rules.getList()) {
+                            if(rule.type() == "simple")
+                                observable_simple_rules.add((RuleSimple) rule);
+                            else
+                                observable_advanced_rules.add((RuleAdvanced) rule);
+                        }
+                    }
                 }
-                canvas.drawGrid(grid);
-
             }
         });
     }

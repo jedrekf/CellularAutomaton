@@ -1,5 +1,7 @@
 package models;
 
+import models.rules.RuleSet;
+
 import java.io.Serializable;
 
 /**
@@ -7,7 +9,20 @@ import java.io.Serializable;
  */
 public class Cell implements Serializable{
     private int state; //0 = dead, 1 = alive
-    Cell[][] neighbours;
+    int[][] neighbours;
+    private int aliveNeighbours;
+
+
+    public Cell(){
+        state =0;
+    }
+    public Cell(int _state){
+        state = _state;
+    }
+
+    public int getAliveNeighboursCount() {
+        return aliveNeighbours;
+    }
 
     public int getX() {
         return x;
@@ -27,18 +42,20 @@ public class Cell implements Serializable{
 
     private int x,y;
 
-    public Cell(){
-        state =0;
-    }
-    public Cell(int _state){
-        state = _state;
-    }
-
-    public Cell[][] getNeighbours(){
+    public int[][] getNeighbours(){
         return neighbours;
     }
-    public void setNeighbours(Cell[][] neighbours) {
+
+    public void setNeighbours(int[][] neighbours) {
         this.neighbours = neighbours;
+        aliveNeighbours = 0;
+        for(int i=0; i<neighbours.length; i++){
+            for (int j = 0; j < neighbours[0].length; j++) {
+                if(neighbours[i][j] == 1)
+                    if(!(i == 2 && j == 2))
+                        aliveNeighbours ++;
+            }
+        }
     }
     public int getState(){
         return state;
@@ -46,5 +63,6 @@ public class Cell implements Serializable{
     public void setState(int _state){
         state = _state;
     }
+
 
 }

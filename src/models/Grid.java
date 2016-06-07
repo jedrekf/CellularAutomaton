@@ -21,34 +21,28 @@ public class Grid implements Serializable{
     }
 
     private static int width, height;
-    private HashMap<Point, Cell> grid = new HashMap<>();
-    private HashMap<Point, Cell> oldGrid;
-    private ArrayList gridHistory = new ArrayList<HashMap<Point, Cell>>();
-    public Point[][] points;
 
-    public int getState(Point p){
-        if(p.getX() >= getWidth() || p.getY() >= getHeight())
+    private Cell[][] grid;
+    private ArrayList gridHistory = new ArrayList<HashMap<Point, Cell>>();
+
+    public int getState(int x, int y){
+        if(x>= getWidth() || y >= getHeight())
             return -1;
-       return grid.get(p).getState();
+       return grid[x][y].getState();
     }
 
-    /**
-     * Changes a state of a cell to it's contradiction
-     * @param p Point(x,y) where x, y represent place in a grid
-     * @return new Cell state value
-     */
-    public int toggleState(Point p){
-        if(p.getX() >= getWidth() || p.getY() >= getHeight())
+    public int toggleState(int x,int y){
+        if(x>= getWidth() || y >= getHeight())
             return -1;
 
-        Cell cell = grid.get(p);
+        Cell cell = grid[x][y];
         if(cell.getState()==0){
             cell.setState(1);
-            grid.put(p, cell);
+            grid[x][y] = cell;
             return 1;
         }else{
             cell.setState(0);
-            grid.put(p, cell);
+            grid[x][y] = cell;
             return 0;
         }
     }
@@ -56,30 +50,47 @@ public class Grid implements Serializable{
     public Grid(int _width, int _height){
         width = _width;
         height = _height;
-        points = new Point[width][height];
+        grid = new Cell[width][height];
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
-                points[i][j] = new Point(i,j);
-                grid.put(points[i][j], new Cell(0));
+                grid[i][j] = new Cell();
+            }
+        }
+    }
+
+    public void clear(){
+        for(int i=0; i<width; i++){
+            for(int j=0; j<height; j++){
+                grid[i][j] = new Cell();
             }
         }
     }
 
     public void iterate(RuleSet rules){
-        oldGrid = new HashMap<Point, Cell>(grid);
 
+        //assign to each cell it's neighbours EFFICIENT???
+        //updateNeighbours(grid);
+
+        Cell[][] oldGrid = cloneArray(grid); //copy so that the values don't change (IT DOESN"T WORK)
         Cell currCell;
+        int neighboursCount;
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
-                //currCell.setNeighbours(findNeighbours(i,j));
-                //currCell.setState(rules.apply(currCell)); // here the rules are applied to the cell of a grid
-                currCell = oldGrid.get(new Point(i,j));
-                currCell.setX(i);
-                currCell.setY(j);
-                currCell = rules.apply(oldGrid, currCell);
-                grid.put(points[i][j], currCell);
+                currCell = new Cell(oldGrid[i][j].getState());
+                currCell.setNeighbours(findNeighbours(oldGrid, i,j));
+                currCell = rules.apply(currCell);
+                grid[i][j] = currCell;
             }
         }
+    }
+
+    private static Cell[][] cloneArray(Cell[][] src) {
+        int length = src.length;
+        Cell[][] target = new Cell[length][src[0].length];
+        for (int i = 0; i < length; i++) {
+            System.arraycopy(src[i], 0, target[i], 0, src[i].length);
+        }
+        return target;
     }
 
     public Grid iterate(RuleSet rules, int steps){
@@ -89,21 +100,17 @@ public class Grid implements Serializable{
         return this;
     }
 
-    public Cell[][] findNeighbours(int x, int y){
-        Cell[][] neighbours = new Cell[5][5];
+    public int[][] findNeighbours(Cell[][] oldGrid, int x, int y){
+        int[][] neighbours = new int[5][5];
         int v=0, w=0;
 
         for(int i=-2; i <= 2; i++){
             w = 0;
             for(int j=-2; j <= 2; j++){
                 if(x+i >= width || y+j >= height || x+i < 0 || y+j < 0){
-                    neighbours[v][w] = new Cell();
+                    neighbours[v][w] = 0;
                 }else {
-                    if (oldGrid.containsKey(points[x + i][y + j])) {
-                        neighbours[v][w] = oldGrid.get(points[x + i][y + j]);
-                    } else {
-                        neighbours[v][w] = new Cell();
-                    }
+                    neighbours[v][w] = oldGrid[x + i][y + j].getState();
                 }
                 w++;
             }

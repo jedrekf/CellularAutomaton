@@ -29,20 +29,6 @@ public class RuleAdvanced extends Rule implements Serializable{
     }
 
     @Override
-    protected void updateItem(Rule item, boolean empty) {
-        Label label = new Label("(empty)");
-        HBox hbox = new HBox();
-        hbox.getChildren().addAll(label);
-        super.updateItem(item, empty);
-        setText(null);  // No text in label of super class
-        if (empty) {
-            setGraphic(null);
-        } else {
-            label.setText(item!=null ? "draw some shit here" : "<null>");
-            setGraphic(hbox);
-        }
-    }
-    @Override
     public String toString() {
         return "RuleAdvanced{" +
                 "cells=" + Arrays.toString(cells) +
@@ -101,22 +87,17 @@ public class RuleAdvanced extends Rule implements Serializable{
 
     /**
      * Evaluates an outcome for the set of neighbours
-     * @param grid
+     * @param cell Cell for which we calculate the next state
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override
-    public int evaluate(HashMap<Point, Cell> grid, Cell cell) {
-        for(int i=-2; i<=2; i++){
-            for(int j=-2; j<2; j++){
-                if(cell.getX()+i >= Grid.getWidth() || cell.getY() + j >=  Grid.getHeight() || cell.getX()+i < 0 || cell.getY()+j < 0){
-                    if(cells[i][j] == 1)
+    public int evaluate(Cell cell) {
+        int [][] neighbours = cell.getNeighbours();
+        for(int i=0; i<5; i++){
+            for(int j=0; j<5; j++){
+                if(!(i == 2 && j == 2))
+                    if(neighbours[i][j] != cells[i][j])
                         return -1;
-                }else {
-                    if (!(i == 2 && j == 2)) { //we don't count the middle cell
-                        if (grid.get(new Point(cell.getX() + i, cell.getY() + j)).getState() != cells[i][j])
-                            return -1;
-                    }
-                }
             }
         }
         return this.outcome;

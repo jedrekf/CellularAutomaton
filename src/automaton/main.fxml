@@ -19,18 +19,22 @@
               <menus>
                 <Menu mnemonicParsing="false" text="File">
                   <items>
+                        <Menu mnemonicParsing="false" text="Save">
+                           <items>
+                              <MenuItem fx:id="menu_save_grid" mnemonicParsing="false" text="Save Grid" />
+                              <MenuItem fx:id="menu_save_rules" mnemonicParsing="false" text="Save Rules" />
+                           </items>
+                        </Menu>
                         <MenuItem fx:id="menu_load" mnemonicParsing="false" text="Load" />
-                    <MenuItem fx:id="menu_save" mnemonicParsing="false" text="Save" />
                   </items>
                 </Menu>
               </menus>
             </MenuBar>
-            <HBox prefHeight="0.0" prefWidth="600.0" />
          </children>
       </VBox>
    </top>
    <right>
-      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+      <VBox alignment="CENTER" prefHeight="551.0" prefWidth="351.0" BorderPane.alignment="CENTER">
          <children>
             <Label alignment="TOP_LEFT" text="List of simple rules.">
                <padding>

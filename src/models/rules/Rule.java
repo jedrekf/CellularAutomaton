@@ -15,10 +15,10 @@ public abstract class Rule extends ListCell<Rule> implements Serializable{
 
     /**
      * Evaluates cell neighbourhood agains a Rule.
-     * @param grid
+     * @param cell Cell for which we calculate the next state.
      * @return Returns set outcome if Rule is met, -1 otherwise
      */
-    public abstract int evaluate(HashMap<Point, Cell> grid, Cell cell);
+    public abstract int evaluate(Cell cell);
 
     /**
      * Get type of a rule ("advanced" / "simple")
