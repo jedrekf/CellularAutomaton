@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.Authenticator;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Stack;
 import java.util.concurrent.Exchanger;
 
 public class Main extends Application implements Initializable{
@@ -129,17 +130,10 @@ public class Main extends Application implements Initializable{
         });
 
         canvas = new ResizableCanvas(grid);
-        canvas.setWidth(2000);
-        canvas.setHeight(1000);
+        canvas.setWidth(1366);
+        canvas.setHeight(768);
         pane.setContent(canvas);
         v = new Visualization(canvas, grid, rules);
-
-        //so that you can't scroll the pane with the mouse scroll
-        pane.setOnScroll(event -> {
-            event.consume();
-        });
-        pane.setOnDragDone(Event::consume);
-        pane.setOnMouseDragExited(event -> event.consume());
 
         canvas.setOnMouseClicked(event -> {
             mouseX = event.getX();
@@ -203,6 +197,7 @@ public class Main extends Application implements Initializable{
             choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA GRID", "*.ca_grid"));
 
             File f = choose.showSaveDialog(window);
+            if(f!=null)
             if(!f.getName().contains(".")) {
                 f = new File(f.getAbsolutePath() + ".ca_grid");
                 String path = (f.getAbsolutePath());
@@ -215,6 +210,7 @@ public class Main extends Application implements Initializable{
             choose.getExtensionFilters().add(new FileChooser.ExtensionFilter("CA RULES", "*.ca_rules"));
 
             File f = choose.showSaveDialog(window);
+            if(f != null)
             if(!f.getName().contains(".")) {
                 f = new File(f.getAbsolutePath() + ".ca_rules");
                 String path = (f.getAbsolutePath());

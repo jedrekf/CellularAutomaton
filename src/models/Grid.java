@@ -5,6 +5,7 @@ import models.rules.RuleSet;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,11 @@ import java.util.Map;
  * Created by jedrek on 05.05.16.
  */
 public class Grid implements Serializable{
+
+    public Grid(Cell[][] grid) {
+        this.grid = grid;
+    }
+
     public static int getWidth() {
         return width;
     }
@@ -22,8 +28,27 @@ public class Grid implements Serializable{
 
     private static int width, height;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Grid grid1 = (Grid) o;
+
+        return Arrays.deepEquals(grid, grid1.grid);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(grid);
+    }
+
+    public Cell[][] getGrid() {
+        return grid;
+    }
+
     private Cell[][] grid;
-    private ArrayList gridHistory = new ArrayList<HashMap<Point, Cell>>();
 
     public int getState(int x, int y){
         if(x>= getWidth() || y >= getHeight())
@@ -68,10 +93,7 @@ public class Grid implements Serializable{
 
     public void iterate(RuleSet rules){
 
-        //assign to each cell it's neighbours EFFICIENT???
-        //updateNeighbours(grid);
-
-        Cell[][] oldGrid = cloneArray(grid); //copy so that the values don't change (IT DOESN"T WORK)
+        Cell[][] oldGrid = cloneArray(grid);
         Cell currCell;
         int neighboursCount;
         for(int i=0; i<width; i++){
@@ -84,7 +106,7 @@ public class Grid implements Serializable{
         }
     }
 
-    private static Cell[][] cloneArray(Cell[][] src) {
+    public static Cell[][] cloneArray(Cell[][] src) {
         int length = src.length;
         Cell[][] target = new Cell[length][src[0].length];
         for (int i = 0; i < length; i++) {
