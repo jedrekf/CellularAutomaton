@@ -13,8 +13,14 @@ import javafx.stage.Stage;
  */
 public class AlertBox {
 
-    static boolean answer;
+    private static boolean answer;
 
+    /**
+     * Displays a Yes/No message box.
+     * @param title Title of a window
+     * @param message Message in window
+     * @return Returns user input Yes - true , or No - false
+     */
     public static boolean display(String title, String message){
         Stage window = new Stage();
 

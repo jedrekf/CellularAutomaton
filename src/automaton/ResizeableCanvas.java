@@ -15,7 +15,7 @@ class ResizableCanvas extends Canvas {
     private boolean redraw = true;
     private double cellSize=20;
     private double padding = 1;
-    public Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK, blank = Color.WHITE;
+    private Color dead = new Color(0.9, 0.9, 0.9, 1), alive = Color.BLACK, blank = Color.WHITE;
 
     /**
      * Returns current grid of a canvas.
@@ -106,7 +106,6 @@ class ResizableCanvas extends Canvas {
         g.clearRect(0, 0, width, height);
 
         g.setFill(dead);
-        //g.fillRoundRect(0, 0, width, height, 30, 30);
         for(int x=0; x<width; x+=cellSize + padding){
             for(int y=0; y<height; y+=cellSize + padding){
                 g.fillRect(x, y, cellSize, cellSize);
@@ -127,7 +126,6 @@ class ResizableCanvas extends Canvas {
         GraphicsContext g = getGraphicsContext2D();
         g.clearRect(0, 0, width, height);
 
-        //TODO split across threads
         int i=0, j;
         for(int x=0; x<width; x+=cellSize + padding){
             j=0;

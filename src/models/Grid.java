@@ -17,16 +17,14 @@ public class Grid implements Serializable{
     public Grid(Cell[][] grid) {
         this.grid = grid;
     }
-
     public static int getWidth() {
         return width;
     }
-
     public static int getHeight() {
         return height;
     }
-
     private static int width, height;
+    private Cell[][] grid;
 
     @Override
     public boolean equals(Object o) {
@@ -48,14 +46,18 @@ public class Grid implements Serializable{
         return grid;
     }
 
-    private Cell[][] grid;
-
     public int getState(int x, int y){
         if(x>= getWidth() || y >= getHeight())
             return -1;
        return grid[x][y].getState();
     }
 
+    /**
+     * Toggle state for a cell at X Y
+     * @param x col of cell
+     * @param y row of cell
+     * @return
+     */
     public int toggleState(int x,int y){
         if(x>= getWidth() || y >= getHeight())
             return -1;
@@ -72,6 +74,11 @@ public class Grid implements Serializable{
         }
     }
 
+    /**
+     * Create a grid
+     * @param _width grid width
+     * @param _height grod height
+     */
     public Grid(int _width, int _height){
         width = _width;
         height = _height;
@@ -83,6 +90,9 @@ public class Grid implements Serializable{
         }
     }
 
+    /**
+     * Clear the grid
+     */
     public void clear(){
         for(int i=0; i<width; i++){
             for(int j=0; j<height; j++){
@@ -91,6 +101,10 @@ public class Grid implements Serializable{
         }
     }
 
+    /**
+     * Iterate the grid over the rule set
+     * @param rules rule set to iterate over
+     */
     public void iterate(RuleSet rules){
 
         Cell[][] oldGrid = cloneArray(grid);
@@ -106,6 +120,11 @@ public class Grid implements Serializable{
         }
     }
 
+    /**
+     * Clone Array
+     * @param src Source Array to clone
+     * @return iterated Grid
+     */
     public static Cell[][] cloneArray(Cell[][] src) {
         int length = src.length;
         Cell[][] target = new Cell[length][src[0].length];
@@ -115,6 +134,12 @@ public class Grid implements Serializable{
         return target;
     }
 
+    /**
+     * Iterate Grid number of steps
+     * @param rules Rules to iterate over
+     * @param steps NUmber of steps after which we get the grid
+     * @return new iterated Grid
+     */
     public Grid iterate(RuleSet rules, int steps){
         for(int i=0;i<steps;i++){
             iterate(rules);
@@ -122,6 +147,13 @@ public class Grid implements Serializable{
         return this;
     }
 
+    /**
+     * Find neighbours of cell
+     * @param oldGrid Grid
+     * @param x col
+     * @param y row
+     * @return Get array of neighbours states
+     */
     public int[][] findNeighbours(Cell[][] oldGrid, int x, int y){
         int[][] neighbours = new int[5][5];
         int v=0, w=0;

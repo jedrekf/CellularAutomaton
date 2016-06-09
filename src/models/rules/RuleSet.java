@@ -49,8 +49,7 @@ public class RuleSet implements Serializable{
     }
     /**
      * Calculates the next state of a Cell based on a set of rules.
-     *
-     * @param cell
+     * @param cell Cell for which we evaluate the next state
      * @return Next state of a cell
      */
     public Cell apply(Cell cell){
@@ -68,10 +67,10 @@ public class RuleSet implements Serializable{
     }
     /**
      * Validate if a rule can be added to a current set of rules.
-     * @param rule
+     * @param rule Rule to be added to a set
      * @return true if a rule can be added to a set of rules, false otherwise
      */
-    public boolean validateRule(Rule rule){
+    private boolean validateRule(Rule rule){
         if(rule.type().compareTo("simple") == 0){
             RuleSimple ruleSimple = (RuleSimple)rule;
             Rule currOldRule;

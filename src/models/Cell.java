@@ -9,9 +9,9 @@ import java.io.Serializable;
  */
 public class Cell implements Serializable{
     private int state; //0 = dead, 1 = alive
-    int[][] neighbours;
+    private int[][] neighbours;
     private int aliveNeighbours;
-
+    private int x,y;
 
     public Cell(){
         state =0;
@@ -19,33 +19,24 @@ public class Cell implements Serializable{
     public Cell(int _state){
         state = _state;
     }
-
     public int getAliveNeighboursCount() {
         return aliveNeighbours;
     }
-
     public int getX() {
         return x;
     }
-
     public void setX(int x) {
         this.x = x;
     }
-
     public int getY() {
         return y;
     }
-
     public void setY(int y) {
         this.y = y;
     }
-
-    private int x,y;
-
     public int[][] getNeighbours(){
         return neighbours;
     }
-
     public void setNeighbours(int[][] neighbours) {
         this.neighbours = neighbours;
         aliveNeighbours = 0;
@@ -63,6 +54,5 @@ public class Cell implements Serializable{
     public void setState(int _state){
         state = _state;
     }
-
 
 }

@@ -32,7 +32,6 @@ public class Visualization {
     public void setDelay(double delay) {
         this.delay = delay;
     }
-
     public void setRules(RuleSet rules) {
         this.rules = rules;
     }
@@ -40,6 +39,12 @@ public class Visualization {
         this.grid = grid;
     }
 
+    /**
+     * Creates an instance of visualization
+     * @param canvas Canvas for visualization display
+     * @param grid Grid we update
+     * @param rules Rules on which the visualization runs
+     */
     public Visualization(ResizableCanvas canvas, Grid grid, RuleSet rules) {
         this.canvas = canvas;
         this.grid = grid;
@@ -61,7 +66,10 @@ public class Visualization {
 
     }
 
-
+    /**
+     * Starts/Unpauses a visualization
+     * @throws InterruptedException
+     */
     public void start() throws InterruptedException {
         if(!lock) {
             if(!paused){
@@ -101,19 +109,30 @@ public class Visualization {
         }
     }
 
+    /**
+     * Pauses the simulation
+     */
     public synchronized void pause(){
         timeline.pause();
         paused = true;
         System.out.println("Paused.");
     }
 
-
+    /**
+     * Forwards a visualization by a given number of steps
+     * @param steps Number of steps to make before displaying the grid
+     * @throws InterruptedException
+     */
     public void step(int steps) throws InterruptedException {
         if(!lock) {
             grid = grid.iterate(rules, steps);
             canvas.drawGrid(grid);
         }
     }
+
+    /**
+     * Stops the simulation
+     */
     public synchronized void stop(){
         lock = true;
         timeline.stop();
@@ -128,6 +147,9 @@ public class Visualization {
 
     }
 
+    /**
+     * Unlocks the visualization so it can be started.
+     */
     public void unlock(){
         lock = false;
     }

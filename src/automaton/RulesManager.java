@@ -61,6 +61,11 @@ public class RulesManager implements Initializable {
     }
     public RulesManager() {}
 
+    /**
+     * Initializes a rule manager
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         for(Rule rule : rules.getList()){
@@ -143,6 +148,11 @@ public class RulesManager implements Initializable {
         });
     }
 
+    /**
+     * Displays a rule manager
+     * @returnm Updated Set of rules
+     * @throws Exception
+     */
     public RuleSet display() throws Exception{
         window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);

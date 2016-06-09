@@ -75,7 +75,11 @@ public class Main extends Application implements Initializable{
     @FXML
     MenuItem menu_load;
 
-
+    /**
+     * Initializes the program
+     * @param location
+     * @param resources
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         grid = new Grid(gridWidth, gridHeight);
@@ -230,20 +234,24 @@ public class Main extends Application implements Initializable{
                     Grid tmpGrid = (Grid) FileManager.read(f.getAbsolutePath());
                     if(tmpGrid != null){
                         grid = tmpGrid;
+                        v = new Visualization(canvas, grid, rules);
                         canvas.drawGrid(grid);
                     }
                 }else if(fileExtension.compareTo("ca_rules") == 0){
                     RuleSet tmpRules = (RuleSet) FileManager.read(f.getAbsolutePath());
                     if(tmpRules != null){
                         rules = tmpRules;
+                        v = new Visualization(canvas, grid, rules);
                         for (Rule rule : rules.getList()) {
                             if(rule.type() == "simple") {
                                 observable_simple_rules.clear();
                                 observable_simple_rules.add((RuleSimple) rule);
+                                listview_rules_simple.refresh();
                             }
                             else {
                                 observable_advanced_rules.clear();
                                 observable_advanced_rules.add((RuleAdvanced) rule);
+                                listview_rules_advanced.refresh();
                             }
                         }
                     }
@@ -255,8 +263,8 @@ public class Main extends Application implements Initializable{
 
     /**
      * Clears the canvas and draws the given grid on a canvas.
-     * @param canvas
-     * @param grid
+     * @param canvas Canvas to draw on
+     * @param grid Grid to be drawn
      */
     public void updateCanvas(ResizableCanvas canvas, Grid grid){
         canvas.drawGrid(grid);
@@ -281,6 +289,10 @@ public class Main extends Application implements Initializable{
         launch(args);
     }
 
+    /**
+     * Displays a rule manager
+     * @throws Exception
+     */
     public void manageRules() throws Exception {
         System.out.println("manager");
         RulesManager manager = new RulesManager(rules);
@@ -297,7 +309,10 @@ public class Main extends Application implements Initializable{
         }
     }
 
-    public void appExit(){
+    /**
+     * Close the Application
+     */
+    private void appExit(){
         boolean answer = AlertBox.display("Exiting the application.","Are you sure you want to exit?");
         if(answer) {
             window.close();

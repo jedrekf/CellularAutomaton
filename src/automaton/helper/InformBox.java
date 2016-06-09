@@ -12,7 +12,11 @@ import javafx.stage.Stage;
  * Created by Jedrek on 2016-05-21.
  */
 public class InformBox {
-
+    /**
+     * Displays a Message
+     * @param title title of a window
+     * @param message Message in a window
+     */
     public static void display(String title, String message){
         Stage window = new Stage();
 

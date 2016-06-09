@@ -39,6 +39,8 @@ public class SimpleRuleCreator implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        newRuleSimple = null;
+
         ObservableList<String> options_combo_amount = FXCollections.observableArrayList("more than","less than", "exactly");
         combo_amount.setValue(options_combo_amount.get(2));
         combo_amount.setItems(options_combo_amount);
@@ -81,6 +83,7 @@ public class SimpleRuleCreator implements Initializable {
             newRuleSimple = null;
             stage.hide();
         });
+
     }
 
     /**

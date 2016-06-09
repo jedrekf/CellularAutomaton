@@ -1,6 +1,6 @@
 package automaton.file;
 
-import automaton.AutomatonState;
+import automaton.helper.InformBox;
 import models.Grid;
 import models.rules.RuleSet;
 
@@ -22,7 +22,11 @@ public class FileManager {
         {
             FileInputStream fileIn = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            obj = in.readObject();
+            try {
+                obj = in.readObject();
+            }catch (Exception e){
+                InformBox.display("File Loader","File is invalid.");
+            }
             in.close();
             fileIn.close();
         }catch(Exception e){

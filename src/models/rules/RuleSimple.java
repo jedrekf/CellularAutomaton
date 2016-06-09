@@ -30,8 +30,6 @@ public class RuleSimple extends Rule implements Serializable{
     public RuleExact[] getExacts(){
         return exacts;
     }
-
-
     @Override
     public String toString() {
         String text;
@@ -49,11 +47,10 @@ public class RuleSimple extends Rule implements Serializable{
 
         return text;
     }
-
     /**
      * Creates a Simple Rule
      * @param aliveNeighbours Number of alive neighbours needed for a rule
-     * @param condition Condition to be met ("less" than / "more" than)
+     * @param condition Condition to be met ("less" than / "more" than / "exactly")
      * @param outcome Outcome for a Cell (alive = 1 / dead = 0)
      */
     public RuleSimple(int aliveNeighbours, String condition, int outcome) {
@@ -89,7 +86,7 @@ public class RuleSimple extends Rule implements Serializable{
     }
     /**
      * Evaluates an outcome for the set of neighbours
-     * @param cell
+     * @param cell Cell for which we evaluate the next state
      * @return outcome for the given neighbourhood, -1 if the rule couldn't be applied
      */
     @Override

@@ -35,7 +35,6 @@ public class RuleAdvanced extends Rule implements Serializable{
                 ", outcome=" + outcome +
                 '}';
     }
-
     /**
      * Creates an Advanced Rule
      * @param alive_neighbours Array of Cells for a rule
@@ -56,7 +55,6 @@ public class RuleAdvanced extends Rule implements Serializable{
 
         exact = generateExact(alive_neighbours);
     }
-
     /**
      * Generates Exact Rule equivalent for Advanced Rule
      * @param neighbours array of Cell neighbours
@@ -67,7 +65,6 @@ public class RuleAdvanced extends Rule implements Serializable{
         tempexact[0] = new RuleExact(countAlive(neighbours), outcome);
         return tempexact;
     }
-
     /**
      * Counts Alive cells excluding the current(middle) cell
      * @param cellNeighbours
@@ -84,7 +81,6 @@ public class RuleAdvanced extends Rule implements Serializable{
         }
         return counter;
     }
-
     /**
      * Evaluates an outcome for the set of neighbours
      * @param cell Cell for which we calculate the next state
@@ -102,7 +98,6 @@ public class RuleAdvanced extends Rule implements Serializable{
         }
         return this.outcome;
     }
-
     /**
      * Type of a rule
      * @return Type of a rule

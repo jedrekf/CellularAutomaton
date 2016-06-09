@@ -38,6 +38,8 @@ public class AdvancedRuleCreator implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        newRuleAdvanced = null;
+
         ObservableList<String> options_combo_outcome = FXCollections.observableArrayList("alive","dead");
         combo_outcome.setValue(options_combo_outcome.get(0));
         combo_outcome.setItems(options_combo_outcome);
@@ -82,6 +84,13 @@ public class AdvancedRuleCreator implements Initializable {
         });
     }
 
+    /**
+     * Get node from grid.
+     * @param gridPane Grid to get node from.
+     * @param col column of a grid
+     * @param row row of a grid
+     * @return Node at a given column, row in grid
+     */
     private Node getNodeFromGridPane(GridPane gridPane, int col, int row) {
         for (Node node : gridPane.getChildren()) {
             if (GridPane.getColumnIndex(node) == col && GridPane.getRowIndex(node) == row) {
